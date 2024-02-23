@@ -39,7 +39,8 @@ body {
   @apply h-[100dvh];
   @apply overflow-hidden;
   background-image: url("/src/assets//pictures/background.png");
-  background-size: cover;
-  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-repeat: unset;
   background-attachment: fixed;
+  background-position: center;
 }
