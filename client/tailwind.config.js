@@ -5,7 +5,7 @@ export default {
     extend: {
       colors: {
         "dark-green": "#104533",
-        "light-text": "#FFFFFF",
+        "main-text": "#FFFFFF",
         "primary-button": "#D4AF37",
         "secondary-button": "#B7950B",
         "accent-silver": "#C0C0C0",

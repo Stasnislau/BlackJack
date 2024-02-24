@@ -1,12 +1,16 @@
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
 import HighOrderComponent from "./components/hoc"
 import { useContext, } from "react"
-import { GamePage, ErrorPage } from "./pages"
+import { GamePage, ErrorPage, Lobby } from "./pages"
 import { Context } from "./main"
 
 const availableRoutes = [
   {
     path: '/',
+    component: Lobby,
+  },
+  {
+    path: "/game/:id",
     component: GamePage,
   },
 ]
