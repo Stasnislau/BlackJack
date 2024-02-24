@@ -55,7 +55,6 @@ builder.Services.AddCors(options =>
         .AllowAnyMethod()
         .AllowCredentials());
 });
-
 var app = builder.Build();
 // app.UseMiddleware<ExceptionMiddleware>();
 
@@ -64,9 +63,7 @@ app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
 app.MapControllers();
 
 // app.UseMiddleware<UserInfoMiddleware>();
-// app.MapHub<GameHub>("/gameHub");
 app.Run();
