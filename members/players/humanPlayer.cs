@@ -12,4 +12,14 @@ public class HumanPlayer : Player
             Console.WriteLine($"{card.Rank} of {card.Suit}");
         }
     }
+
+    public override void DoAction(Deck deck)
+    {
+        Console.WriteLine("Do you want to draw a card? (y/n)");
+        string input = Console.ReadLine();
+        if (input == "y")
+        {
+            Draw(deck);
+        }
+    }
 }

@@ -8,6 +8,7 @@ public class Croupier : Player
     public void Draw(Deck deck, bool show)
     {
         Hand.Add(deck.Draw());
+        CalculateScore();
         if (show)
         {
             Console.WriteLine($"{Name} drew a {Hand[Hand.Count - 1].Rank} of {Hand[Hand.Count - 1].Suit}");
@@ -25,6 +26,14 @@ public class Croupier : Player
         foreach (Card card in Hand)
         {
             Console.WriteLine($"{card.Rank} of {card.Suit}");
+        }
+    }
+
+    public override void DoAction(Deck deck)
+    {
+        if (Score < 17)
+        {
+            Draw(deck, true);
         }
     }
     

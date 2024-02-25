@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
-// builder.Services.AddScoped<RatesService>();
+builder.Services.AddScoped<GameService>();
 // builder.Services.AddScoped<AuthorizationService>();
 builder.Services.AddHttpContextAccessor();
 
@@ -16,7 +16,7 @@ DotNetEnv.Env.Load();
 // builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //     options.UseNpgsql(Environment.GetEnvironmentVariable("DATABASE_URL"))
 // );
-builder.Services.AddSignalR();
+// builder.Services.AddSignalR();
 
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
@@ -62,7 +62,6 @@ app.UseRouting();
 app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers();
 app.MapControllers();
 
 // app.UseMiddleware<UserInfoMiddleware>();
