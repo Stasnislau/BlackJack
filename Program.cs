@@ -16,7 +16,8 @@ DotNetEnv.Env.Load();
 // builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //     options.UseNpgsql(Environment.GetEnvironmentVariable("DATABASE_URL"))
 // );
-// builder.Services.AddSignalR();
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<GameSessionsManager>();
 
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
@@ -63,6 +64,7 @@ app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<GameHub>("/gameHub");
 
 // app.UseMiddleware<UserInfoMiddleware>();
 app.Run();

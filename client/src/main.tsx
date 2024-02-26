@@ -7,6 +7,7 @@ import Store from './store';
 const store = new Store();
 export const Context = createContext(store);
 
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Context.Provider value={store}>
