@@ -1,14 +1,30 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { CreateNameModal } from '../components/modals';
 
 const Lobby = () => {
     const navigate = useNavigate();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
     return (
         <div>
-            <h1>Lobby</h1>
-            <p>This is the lobby page</p>
-            <button onClick={() => navigate('/game/123')}>Go to game</button>
+            <div className="flex items-center justify-center h-screen">
+                <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="bg-green-500 text-white p-4 rounded-lg"
+                >
+                    Join Game
+                </button>
+            </div>
 
+            <CreateNameModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSubmit={(name) => {
+                    console.log(name);
+                    navigate('/game');
+                }}
+            />
         </div>
     );
 }
