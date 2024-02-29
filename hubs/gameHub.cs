@@ -9,7 +9,7 @@ public class GameHub : Hub
         _gameSessionsManager = gameSessionsManager;
     }
 
-    public async Task createGame ()
+    public async Task CreateGame ()
     {
         var sessionId = _gameSessionsManager.CreateGameSession();
         await Groups.AddToGroupAsync(Context.ConnectionId, sessionId);
@@ -19,18 +19,27 @@ public class GameHub : Hub
     public async Task JoinGame(string gameId)
     {
         await Groups.AddToGroupAsync(Context.ConnectionId, gameId);
-        await Clients.Group(gameId).SendAsync("ReceiveMessage", $"{Context.ConnectionId} has joined the group {gameId}.");
+        await Clients.Group(gameId).SendAsync("GameMessage", $"{Context.ConnectionId} has joined the group {gameId}.");
     }
 
     public async Task LeaveGame(string gameId)
     {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, gameId);
-        await Clients.Group(gameId).SendAsync("ReceiveMessage", $"{Context.ConnectionId} has left the group {gameId}.");
+        await Clients.Group(gameId).SendAsync("GameMessage", $"{Context.ConnectionId} has left the group {gameId}.");
+    }
+
+    public async Task StartGame(string gameId)
+    {
+        await Clients.Group(gameId).SendAsync("GameMessage", $"{Context.ConnectionId} has started the game {gameId}.");
     }
 
     public override async Task OnDisconnectedAsync(Exception ?exception)
     {
         _gameSessionsManager.RemovePlayerFromSession(Context.ConnectionId);
+        if (exception != null)
+        {
+            Console.WriteLine(exception.Message);
+        }
         await base.OnDisconnectedAsync(exception);
     }
 

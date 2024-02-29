@@ -16,9 +16,6 @@ DotNetEnv.Env.Load();
 // builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //     options.UseNpgsql(Environment.GetEnvironmentVariable("DATABASE_URL"))
 // );
-builder.Services.AddSignalR();
-builder.Services.AddSingleton<GameSessionsManager>();
-
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
@@ -56,6 +53,9 @@ builder.Services.AddCors(options =>
         .AllowAnyMethod()
         .AllowCredentials());
 });
+
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<GameSessionsManager>();
 var app = builder.Build();
 // app.UseMiddleware<ExceptionMiddleware>();
 
