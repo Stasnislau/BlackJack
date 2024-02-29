@@ -2,8 +2,10 @@ using DTOs;
 
 public class GameSessionsManager
 {
-    private readonly Dictionary<string, BlackjackGame> _sessions = new();
-    private readonly Dictionary<string, string> _connectionSessionMap = new();
+    private readonly Dictionary<string, BlackjackGame> _sessions = new(); // 
+    private readonly Dictionary<string, string> _connectionSessionMap = new(); //  connectionId, sessionId
+
+    private readonly Dictionary<string, string> _playerConnectionMap = new(); //  playerId, connectionId
 
         private BlackjackGame? GetGameSession(string sessionId)
     {
@@ -17,7 +19,7 @@ public class GameSessionsManager
         return sessionId;
     }
 
-    public GameState StartGame(string sessionId, string playerId)
+    public GameState StartGame(string sessionId, string connectionId)
     {
         var game = GetGameSession(sessionId);
         if (game == null)
@@ -25,20 +27,39 @@ public class GameSessionsManager
             throw new ArgumentException("Session not found");
         }
         game.StartGame();
+        string playerId = GetPlayerId(connectionId);
         return game.GetGameState(playerId);
     }
 
-    public void AddPlayerToSession(string sessionId, string connectionId)
+    public string AddHumanPlayerToSession(string sessionId, string name, string connectionId)
     {
-        _connectionSessionMap[connectionId] = sessionId;
-    }
-    public void RemovePlayerFromSession(string connectionId)
-    {
-        if (_connectionSessionMap.TryGetValue(connectionId, out var sessionId))
+        var game = GetGameSession(sessionId);
+        if (game == null)
         {
-            _sessions[sessionId]?.RemovePlayer(connectionId); 
+            throw new ArgumentException("Session not found");
+        }
+        var playerId = game.AddHumanPlayer(name);
+        _connectionSessionMap[connectionId] = sessionId;
+        _playerConnectionMap[playerId] = connectionId;
+        return playerId;
+    }
+    public void AddAIPlayerToSession(string sessionId)
+    {
+        _sessions[sessionId]?.AddAIPlayer();
+    }
+    public void RemoveHumanPlayerFromSession(string sessionId, string connectionId, string? playerId)
+    {
+        playerId ??= GetPlayerId(connectionId);
+        
+        _sessions[sessionId]?.RemovePlayer(playerId);
+        _connectionSessionMap.Remove(connectionId);
+        _playerConnectionMap.Remove(playerId);
+    }
+    public void RemovePlayerFromSession(string sessionId, string playerId) {
+        if (_playerConnectionMap.TryGetValue(playerId, out var connectionId)) {
             _connectionSessionMap.Remove(connectionId);
         }
+        _playerConnectionMap.Remove(playerId);
     }
 
     public void RemoveSession(string sessionId)
@@ -52,5 +73,19 @@ public class GameSessionsManager
             return null;
         }
         return game.GetGameState(playerId);
+    }
+
+    public bool ReconnectPlayer(string connectionId, string playerId) {
+        if (_playerConnectionMap.ContainsKey(playerId)) {
+            return false;
+        }
+        _playerConnectionMap[connectionId] = playerId;
+        _connectionSessionMap[connectionId] = _sessions.FirstOrDefault(x => x.Value.Players.Any(p => p.Id == playerId)).Key;
+        return true;
+    }
+
+    private string GetPlayerId(string connectionId)
+    {
+        return _playerConnectionMap.TryGetValue(connectionId, out var playerId) ? playerId : "";
     }
 }

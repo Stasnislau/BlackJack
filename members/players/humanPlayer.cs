@@ -4,7 +4,6 @@ public class HumanPlayer : Player
     {
     }
 
-
     public void Split()
     {
         Console.WriteLine("Splitting is not yet implemented");

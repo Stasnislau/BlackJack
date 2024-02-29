@@ -43,14 +43,16 @@ public class BlackjackGame
         NextPlayer();
     }
 
-    public void AddHumanPlayer(string name, bool isAi = false)
+    public string AddHumanPlayer(string name)
     {
-        if (isAi)
-        {
-            Players.Add(new AIPlayer(name));
-            return;
-        }
-        Players.Add(new HumanPlayer(name));
+        var player = new HumanPlayer(name);
+        return player.Id;
+    }
+
+    public void AddAIPlayer() // generate a random name for the AI
+    {
+        string name = "AI" + new Random().Next(1000, 9999);
+        Players.Add(new AIPlayer(name));
     }
 
     public void RemovePlayer(string id)

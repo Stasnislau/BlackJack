@@ -9,34 +9,51 @@ public class GameHub : Hub
         _gameSessionsManager = gameSessionsManager;
     }
 
-    public async Task CreateGame ()
+    public async Task CreateGame()
     {
         var sessionId = _gameSessionsManager.CreateGameSession();
         await Groups.AddToGroupAsync(Context.ConnectionId, sessionId);
-        await Clients.Group(sessionId).SendAsync("GameCreated", sessionId);
+        await Clients.Group(sessionId).SendAsync("GameMessage", new {
+            task = "Create",
+            sessionId,
+            message = $"{Context.ConnectionId} has created the group {sessionId}."
+        });
     }
 
-    public async Task JoinGame(string gameId)
+    public async Task JoinGame(string gameId, string name)
     {
         await Groups.AddToGroupAsync(Context.ConnectionId, gameId);
-        _gameSessionsManager.AddPlayerToSession(gameId, Context.ConnectionId);
-        await Clients.Group(gameId).SendAsync("GameMessage", $"{Context.ConnectionId} has joined the group {gameId}.");
+        string playerId = _gameSessionsManager.AddHumanPlayerToSession(gameId, name, Context.ConnectionId);
+        await Clients.Group(gameId).SendAsync("GameMessage", new {
+            task = "Join",
+            gameId,
+            playerId,
+            message = $"{Context.ConnectionId} has joined the group {gameId}."
+        });
     }
 
-    public async Task LeaveGame(string gameId)
+    public async Task LeaveGame(string gameId, string playerId)
     {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, gameId);
-        await Clients.Group(gameId).SendAsync("GameMessage", $"{Context.ConnectionId} has left the group {gameId}.");
+        _gameSessionsManager.RemovePlayerFromSession(Context.ConnectionId, playerId);
+        await Clients.Group(gameId).SendAsync("GameMessage", $"{playerId} has left the group {gameId}.");
+        await Clients.Caller.SendAsync("GameMessage", new {
+            task = "Leave",
+            gameId,
+            message = $"You have left the group {gameId}."
+        });
     }
 
     public async Task StartGame(string gameId)
     {
         await Clients.Group(gameId).SendAsync("GameMessage", $"{Context.ConnectionId} has started the game {gameId}.");
+        var gameState = _gameSessionsManager.StartGame(gameId, Context.ConnectionId);
+        await Clients.Group(gameId).SendAsync("GameStateChanged", gameState);
     }
 
     public override async Task OnDisconnectedAsync(Exception ?exception)
     {
-        _gameSessionsManager.RemovePlayerFromSession(Context.ConnectionId);
+        _gameSessionsManager.RemovePlayerFromSession(Context.ConnectionId, playerId: "");
         if (exception != null)
         {
             Console.WriteLine(exception.Message);
