@@ -29,7 +29,7 @@ public class Croupier : Player
         }
     }
 
-    public override void DoAction(Deck deck)
+    public void DoAction(Deck deck)
     {
         if (Score < 17)
         {

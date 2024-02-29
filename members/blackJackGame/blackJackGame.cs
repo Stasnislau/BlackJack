@@ -1,4 +1,4 @@
-
+using DTOs;
 public class BlackjackGame
 {
     public List<Player> Players { get; }
@@ -12,6 +12,8 @@ public class BlackjackGame
 
     public int Bet { get; set; }
 
+    public bool IsGamePaused { get; set; }
+
 
 
     public BlackjackGame()
@@ -22,13 +24,13 @@ public class BlackjackGame
         IsGameOver = false;
         CurrentPlayerId = "";
         Bet = 10;
+        IsGamePaused = false;
     }
 
     public void StartGame()
     {
         Players.ForEach(player => player.SetBet(Bet));
         Croupier.SetBet(Bet);
-
         Deck.PopulateDeck();
         Deck.Shuffle();
         foreach (Player player in Players)
@@ -38,7 +40,7 @@ public class BlackjackGame
         }
         Croupier.Draw(Deck, true);
         Croupier.Draw(Deck, true);
-
+        NextPlayer();
     }
 
     public void AddHumanPlayer(string name, bool isAi = false)
@@ -55,8 +57,6 @@ public class BlackjackGame
     {
         Players.RemoveAll(player => player.Id == id);
     }
-
-
     public void NextPlayer()
     {
         if (CurrentPlayerId == "")
@@ -91,6 +91,10 @@ public class BlackjackGame
 
     public Dictionary<string, string> DetermineResults()
     {
+        if (!IsGameOver)
+        {
+            return new Dictionary<string, string>();
+        }
         Dictionary<string, string> results = new Dictionary<string, string>();
         foreach (Player player in Players)
         {
@@ -138,6 +142,77 @@ public class BlackjackGame
             results.Add(player.Id, "Lose");
         }
         return results;
+    }
+
+    public GameState GetGameState(string playerId)
+    {
+        var CroupierHand = Croupier.Hand.Select((card, index) => new CardDTO(CurrentPlayerId == Croupier.Id || Croupier.HasFinishedTurn || index == 0, card.Rank, card.Suit)).ToList();
+        var playersList = Players.Select(player => new PlayerDTO(
+            player.Name,
+            player.Hand.Select(card => new CardDTO(player.HasFinishedTurn || playerId == CurrentPlayerId, card.Rank, card.Suit)).ToList(),
+            player.Money,
+            player is AIPlayer,
+            player is Croupier,
+            player.HasFinishedTurn ? player.Score : 0,
+            player.Id,
+            player.Bet,
+            player.HasFinishedTurn,
+            player.Hand.Count == 2 && player.Score == 21
+        )).ToList();
+        if (playerId == Croupier.Id)
+        {
+            return new GameState(
+                CurrentPlayerId,
+                IsGameOver,
+                IsGamePaused,
+                playersList,
+                DetermineResults()
+            );
+        }
+        playersList.Add(new PlayerDTO(
+            Croupier.Name,
+            Croupier.Hand.Select(card => new CardDTO(true, card.Rank, card.Suit)).ToList(),
+            Croupier.Money,
+            false,
+            true,
+            Croupier.HasFinishedTurn ? Croupier.Score : 0,
+            Croupier.Id,
+            Croupier.Bet,
+            Croupier.HasFinishedTurn,
+            Croupier.Hand.Count == 2 && Croupier.Score == 21
+        ));
+        return new GameState(
+            CurrentPlayerId,
+            IsGameOver,
+            IsGamePaused,
+            playersList,
+            DetermineResults()
+        );
+    }
+
+    public void MakeAIAction()
+    {
+        if (CurrentPlayerId == Croupier.Id)
+        {
+            while (!Croupier.HasFinishedTurn)
+            {
+                Croupier.DoAction(Deck);
+            }
+            return;
+        }
+        AIPlayer currentPlayer = (AIPlayer)Players.Find(player => player.Id == CurrentPlayerId);
+        if (currentPlayer == null)
+        {
+            return;
+        }
+        while (!currentPlayer.HasFinishedTurn)
+        {
+            currentPlayer.DoAction(Deck);
+        }
+        if (currentPlayer.HasFinishedTurn)
+        {
+            NextPlayer();
+        }
     }
 
 }

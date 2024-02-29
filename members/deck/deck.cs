@@ -1,6 +1,7 @@
 public enum Suit
 {
-    Spades,
+    hidden = 0,
+    Spades = 1,
     Hearts,
     Diamonds,
     Clubs
@@ -8,6 +9,7 @@ public enum Suit
 
 public enum Rank
 {
+    hidden = 0,
     Two = 2,
     Three,
     Four,

@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { connection } from '../connection';
-// Create the connection instance 
 const GamePage = () => {
-    // State to track whether we are connected or not
     const [isConnected, setIsConnected] = useState(false);
 
     useEffect(() => {
@@ -20,13 +18,12 @@ const GamePage = () => {
         }
 
         if (!isConnected && connection.state === "Disconnected") {
-            console.log("Wyzow startConnection");
             startConnection();
         }
 
         connection.onclose(() => {
             console.log('SignalR Disconnected.');
-            setIsConnected(false); // Set the state to false once disconnected
+            setIsConnected(false);
             startConnection();
         });
 
@@ -34,12 +31,11 @@ const GamePage = () => {
             if (connection.state === "Connected")
                 connection.stop();
         };
-    }, []); // Only re-run the effect if isConnected changes
+    }, []);
 
     return (
         <div>
             <h1>Game Page</h1>
-            {/* Display connection status based on isConnected */}
             {isConnected ? <p>Connected</p> : <p>Disconnected</p>}
         </div>
     );

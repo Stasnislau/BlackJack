@@ -9,6 +9,8 @@ public abstract class Player
 
     public int Bet { get; private set; }
 
+    public bool HasFinishedTurn = false;
+
     protected bool isBlackjack;
 
     public Player(string name, int money)
@@ -18,12 +20,18 @@ public abstract class Player
         Money = money;
         Id = Guid.NewGuid().ToString();
         Bet = 0;
+        HasFinishedTurn = false;
     }
 
     public void Draw(Deck deck)
     {
         Hand.Add(deck.Draw());
         CalculateScore();
+    }
+
+    public void Stand()
+    {
+        HasFinishedTurn = true;
     }
 
     protected void CalculateScore()
@@ -49,12 +57,6 @@ public abstract class Player
         Hand.Clear();
         Score = 0;
     }
-
-    public virtual void DoAction(Deck deck)
-    {
-        throw new NotImplementedException();
-    }
-
     public void WinBet(int Bet)
     {
         Money += Bet;
