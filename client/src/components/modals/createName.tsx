@@ -15,6 +15,7 @@ const CreateNameModal = ({
     onSubmit,
 }: CreateNameModalProps) => {
     const [name, setName] = useState('');
+    const [gameCode, setGameCode] = useState('');
 
     const ref = useRef(null);
 
@@ -40,7 +41,7 @@ const CreateNameModal = ({
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                 >
                     <div
-                        className="bg-white p-10 rounded-lg text-gray-700 relative"
+                        className="bg-white p-10 rounded-lg text-gray-700 relative md:w-auto w-full max-w-md lg:min-w-80 lg:max-w-none" 
                         ref={ref}
                     >
                         <div className="absolute
@@ -55,14 +56,24 @@ const CreateNameModal = ({
                                 &times;
                             </button>
                         </div>
-                        <h2 className="text-2xl mb-4">Enter your name</h2>
+                        <h2 className="text-2xl mb-4">Registration</h2>
                         <div className="mb-4 flex flex-col">
+                            <label htmlFor="gameCode" className="mb-2">Game Code</label>
+                            <input type="text"
+                                value={gameCode}
+                                onChange={(e) => setGameCode(e.target.value)}
+                                className="border border-black p-2 rounded-lg mb-4"
+                                placeholder='Enter Game Code Here...'
+                            />
+                            <label htmlFor="name" className="mb-2">Name</label>
                             <input
                                 type="text"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                className="border p-2 rounded-lg mb-4"
+                                className="border border-black p-2 rounded-lg mb-4"
+                                placeholder='Enter Name Here...'
                             />
+
                             <button
                                 onClick={handleSubmit}
                                 className="bg-green-500 text-white p-2 rounded-lg"
