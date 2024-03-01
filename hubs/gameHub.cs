@@ -14,7 +14,7 @@ public class GameHub : Hub
         var sessionId = _gameSessionsManager.CreateGameSession();
         await Groups.AddToGroupAsync(Context.ConnectionId, sessionId);
         await Clients.Group(sessionId).SendAsync("GameMessage", new {
-            task = "Create",
+            task = "create",
             sessionId,
             message = $"{Context.ConnectionId} has created the group {sessionId}."
         });
@@ -25,7 +25,7 @@ public class GameHub : Hub
         await Groups.AddToGroupAsync(Context.ConnectionId, gameId);
         string playerId = _gameSessionsManager.AddHumanPlayerToSession(gameId, name, Context.ConnectionId);
         await Clients.Group(gameId).SendAsync("GameMessage", new {
-            task = "Join",
+            task = "join",
             gameId,
             playerId,
             message = $"{Context.ConnectionId} has joined the group {gameId}."
@@ -38,7 +38,7 @@ public class GameHub : Hub
         _gameSessionsManager.RemovePlayerFromSession(Context.ConnectionId, playerId);
         await Clients.Group(gameId).SendAsync("GameMessage", $"{playerId} has left the group {gameId}.");
         await Clients.Caller.SendAsync("GameMessage", new {
-            task = "Leave",
+            task = "leave",
             gameId,
             message = $"You have left the group {gameId}."
         });

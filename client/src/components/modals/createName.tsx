@@ -6,16 +6,18 @@ import useClickOutside from '../../hooks/useClickOutside';
 interface CreateNameModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (name: string) => void;
+    onSubmit: (name: string, gameCode: string) => void;
+    initGameCode: string;
 }
 
 const CreateNameModal = ({
     isOpen,
     onClose,
     onSubmit,
+    initGameCode,
 }: CreateNameModalProps) => {
     const [name, setName] = useState('');
-    const [gameCode, setGameCode] = useState('');
+    const [gameCode, setGameCode] = useState<string>(initGameCode);
 
     const ref = useRef(null);
 
@@ -24,7 +26,7 @@ const CreateNameModal = ({
     });
 
     const handleSubmit = () => {
-        onSubmit(name);
+        onSubmit(name, gameCode);
         onClose();
     };
 
@@ -41,7 +43,7 @@ const CreateNameModal = ({
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                 >
                     <div
-                        className="bg-white p-10 rounded-lg text-gray-700 relative md:w-auto w-full max-w-md lg:min-w-80 lg:max-w-none" 
+                        className="bg-white p-10 rounded-lg text-gray-700 relative md:w-auto w-full max-w-md lg:min-w-80 lg:max-w-none"
                         ref={ref}
                     >
                         <div className="absolute
@@ -61,6 +63,7 @@ const CreateNameModal = ({
                             <label htmlFor="gameCode" className="mb-2">Game Code</label>
                             <input type="text"
                                 value={gameCode}
+                                disabled={initGameCode !== ''}
                                 onChange={(e) => setGameCode(e.target.value)}
                                 className="border border-black p-2 rounded-lg mb-4"
                                 placeholder='Enter Game Code Here...'
@@ -81,6 +84,7 @@ const CreateNameModal = ({
                                 Submit
                             </button>
                         </div>
+                        
                     </div>
                 </motion.div>
             )}

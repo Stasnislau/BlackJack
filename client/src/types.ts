@@ -48,3 +48,9 @@ enum Suit {
   hearts = 2,
   spades = 3,
 }
+
+export interface CreateResponse {
+  task: string;
+  sessionId: string;
+  message: string;
+}
