@@ -11,6 +11,8 @@ const Lobby = () => {
     const [isGameCreated, setIsGameCreated] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
 
+    
+
     useEffect(() => {
         async function startConnection() {
 
@@ -18,6 +20,7 @@ const Lobby = () => {
                 try {
                     await connection.start();
                     console.log('SignalR Connected.');
+                    
                     setIsConnected(true);
                 } catch (err) {
                     console.error('SignalR Connection Error: ', err);
@@ -42,7 +45,6 @@ const Lobby = () => {
     }, []);
 
     const handleCreateGame = async () => {
-        // send a message to the server to create a new game
         connection.invoke('CreateGame').catch((err) => console.error(err));
     }
     useEffect(() => {
@@ -53,7 +55,6 @@ const Lobby = () => {
                 setIsGameCreated(true);
             }
             console.log(message);
-            // Handle the message, update UI accordingly
         });
 
         return () => {
@@ -66,7 +67,7 @@ const Lobby = () => {
             <div className="container mx-auto px-4">
                 <div className="text-center mb-10">
                     <h1 className="xl:text-6xl md:text-3xl text-2xl font-bold text-green-200 mb-4">
-                        BlackJack Table
+                        BlackJack
                     </h1>
                     <p className="md:text-lg sm:text-md text-sm text-green-100 mb-8">
                         Play BlackJack with players from around the globe.
@@ -99,8 +100,18 @@ const Lobby = () => {
                 </div>
                 {isGameCreated && (
                     <div className="flex justify-center items-center mt-8">
-                        <div className="bg-green-500 text-white text-2xl font-bold py-2 px-4 rounded-lg shadow-lg animate-pulse">
-                            Game Code: {gameCode}
+                        <div className="bg-green-600 text-white text-2xl font-bold py-2 px-4 rounded-lg shadow-lg  flex items-center gap-4">
+                            <span>Game Code: &nbsp;
+                                <span className="text-green-100 animate-pulse">
+                                    {gameCode}
+                                </span>
+                            </span>
+                            <button
+                                onClick={() => navigator.clipboard.writeText(gameCode)}
+                                className="bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105"
+                                title="Copy Game Code">
+                                Copy
+                            </button>
                         </div>
                     </div>
                 )}

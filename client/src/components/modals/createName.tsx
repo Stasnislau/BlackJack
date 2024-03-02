@@ -1,6 +1,6 @@
 
-import React, { useRef, useState } from 'react';
-import { AnimatePresence, animate, motion } from 'framer-motion';
+import  { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import useClickOutside from '../../hooks/useClickOutside';
 
 interface CreateNameModalProps {
@@ -17,7 +17,11 @@ const CreateNameModal = ({
     initGameCode,
 }: CreateNameModalProps) => {
     const [name, setName] = useState('');
-    const [gameCode, setGameCode] = useState<string>(initGameCode);
+    const [gameCode, setGameCode] = useState<string>("");
+    useEffect(() => {
+        if (initGameCode !== '')
+        setGameCode(initGameCode);
+    }, [initGameCode]);
 
     const ref = useRef(null);
 
@@ -29,8 +33,6 @@ const CreateNameModal = ({
         onSubmit(name, gameCode);
         onClose();
     };
-
-
 
 
     return (
@@ -65,7 +67,7 @@ const CreateNameModal = ({
                                 value={gameCode}
                                 disabled={initGameCode !== ''}
                                 onChange={(e) => setGameCode(e.target.value)}
-                                className="border border-black p-2 rounded-lg mb-4"
+                                className="border border-black p-2 rounded-lg mb-4 disabled:opacity-50 disabled:bg-gray-200"
                                 placeholder='Enter Game Code Here...'
                             />
                             <label htmlFor="name" className="mb-2">Name</label>

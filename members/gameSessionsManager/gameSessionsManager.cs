@@ -88,4 +88,9 @@ public class GameSessionsManager
     {
         return _playerConnectionMap.TryGetValue(connectionId, out var playerId) ? playerId : "";
     }
+
+    public bool IsGameSessionAvailable(string gameId)
+    {
+        return _sessions.ContainsKey(gameId);
+    }
 }

@@ -59,7 +59,10 @@ public class GameHub : Hub
             Console.WriteLine(exception.Message);
         }
         await base.OnDisconnectedAsync(exception);
-    }
+    }   
 
-    
+    public Task<bool> IsGameSessionAvailable(string gameId)
+    {
+        return Task.FromResult(_gameSessionsManager.IsGameSessionAvailable(gameId));
+    }
 }

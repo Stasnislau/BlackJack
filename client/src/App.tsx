@@ -10,7 +10,7 @@ const availableRoutes = [
     component: Lobby,
   },
   {
-    path: "/game/:id",
+    path: "/game/:gameCode",
     component: GamePage,
   },
 ]

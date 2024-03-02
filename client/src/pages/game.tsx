@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { connection } from '../connection';
+import { useParams } from 'react-router';
 const GamePage = () => {
     const [isConnected, setIsConnected] = useState(false);
 
@@ -33,10 +34,16 @@ const GamePage = () => {
         };
     }, []);
 
+    const { gameCode } = useParams();
+    useEffect(() => {
+        connection.invoke('JoinGame', gameCode).catch((err) => console.error(err));
+    }, [gameCode]);
+
     return (
         <div>
             <h1>Game Page</h1>
             {isConnected ? <p>Connected</p> : <p>Disconnected</p>}
+            {gameCode && <p>Game Code: {gameCode}</p>}
         </div>
     );
 };
