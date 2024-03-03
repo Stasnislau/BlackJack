@@ -51,6 +51,15 @@ enum Suit {
 
 export interface CreateResponse {
   task: string;
-  sessionId: string;
+  gameCode: string;
   message: string;
+}
+
+export interface GameMessageInterface {
+  task: string;
+  message: string;
+  gameCode: string;
+  gameState?: GameState;
+  connectionId?: string;
+  playerId?: string;
 }

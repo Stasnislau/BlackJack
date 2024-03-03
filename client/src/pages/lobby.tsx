@@ -51,10 +51,10 @@ const Lobby = () => {
         connection.on("GameMessage", (message) => {
             const response = message as CreateResponse;
             if (response.task === "create") {
-                setGameCode(response.sessionId);
+                setGameCode(response.gameCode);
                 setIsGameCreated(true);
             }
-            console.log(message);
+            
         });
 
         return () => {
@@ -127,7 +127,7 @@ const Lobby = () => {
                 isOpen={isNameModalOpen}
                 onClose={() => setIsNameModalOpen(false)}
                 onSubmit={(name: string, gameCode: string) => {
-                    navigate(`/game/${gameCode}`);
+                    navigate(`/game/${gameCode}?name=${encodeURIComponent(name)}`);
                 }}
                 initGameCode={gameCode}
             />

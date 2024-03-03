@@ -1,51 +1,6 @@
+import { CardDTO, PlayerDTO } from "../../types";
 
-interface CardProps {
-    isRevealed: boolean;
-    rank: Rank;
-    suit: Suit;
-}
-
-enum Rank {
-    hidden = 0,
-    two = 2,
-    three = 3,
-    four = 4,
-    five = 5,
-    six = 6,
-    seven = 7,
-    eight = 8,
-    nine = 9,
-    ten = 10,
-    jack = 10,
-    queen = 10,
-    king = 10,
-    ace = 11,
-}
-
-enum Suit {
-    hidden = 0,
-    Spades = 1,
-    Hearts,
-    Diamonds,
-    Clubs
-}
-
-
-interface PlayerProps {
-    name?: string;
-    hand?: CardProps[];
-    money?: number;
-    isAI?: boolean;
-    isCroupier?: boolean;
-    score?: number;
-    id?: string;
-    bet?: number;
-    hasFinishedTurn?: boolean;
-    isBlackjack?: boolean;
-    isConnected?: boolean;
-}
-
-const Card = ({ isRevealed, rank, suit }: CardProps) => {
+const Card = ({ isRevealed, rank, suit }: CardDTO) => {
     return (
         <div className="bg-gray-200 p-2 rounded shadow-sm m-1">
             {isRevealed ? `${rank} of ${suit}` : 'Card Back'}
@@ -53,7 +8,11 @@ const Card = ({ isRevealed, rank, suit }: CardProps) => {
     );
 };
 
-const Player = ({
+interface PlayerProps extends PlayerDTO {
+    isConnected?: boolean;
+}
+
+const PlayerBox = ({
     name,
     hand = [],
     money,
@@ -91,3 +50,6 @@ const Player = ({
         </div>
     );
 }
+
+export default PlayerBox;
+
