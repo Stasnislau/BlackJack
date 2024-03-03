@@ -9,9 +9,7 @@ public class GameSessionsManager
 
     private BlackjackGame? GetGame(string gameCode)
     {
-        Console.WriteLine("GetGame, gameCode: " + gameCode);
         var result = _gameCodeGameMap.TryGetValue(gameCode, out var game) ? game : null;
-        Console.WriteLine("GetGame, result: " + result.Players.Count);
         return result;
     }
 
@@ -19,7 +17,6 @@ public class GameSessionsManager
     {
         var gameCode = Guid.NewGuid().ToString();
         _gameCodeGameMap[gameCode] = new BlackjackGame();
-        Console.WriteLine("CreateGameSession, gameCode: " + gameCode);
         return gameCode;
     }
 
@@ -28,7 +25,6 @@ public class GameSessionsManager
         var game = GetGame(gameCode);
         if (game == null)
         {
-            Console.WriteLine("OSHIBKA TUT");
             throw new ArgumentException("Session not found");
         }
         game.StartGame();
@@ -38,15 +34,16 @@ public class GameSessionsManager
 
     public string AddHumanPlayerToSession(string gameCode, string name, string connectionId)
     {
-        Console.WriteLine("POLETELO GOVNO NA VENTILYATOR"); 
         var game = GetGame(gameCode);
         if (game == null)
         {
             throw new ArgumentException("Game not found");
         }
-        Console.WriteLine("POLETELO GOVNO NA VENTILYATOR 2");
+        if (_connectionSessionMap.ContainsKey(connectionId))
+        {
+            throw new ArgumentException("Player already in a game");
+        }
         var playerId = game.AddHumanPlayer(name);
-        Console.WriteLine("POLETELO GOVNO NA VENTILYATOR 3");
         _connectionSessionMap[connectionId] = gameCode;
         _playerConnectionMap[playerId] = connectionId;
         return playerId;

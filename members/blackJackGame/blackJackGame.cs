@@ -45,7 +45,6 @@ public class BlackjackGame
 
     public string AddHumanPlayer(string name)
     {
-        Console.WriteLine(name + "ZASHLO SUDA");
         var player = new HumanPlayer(name);
         Players.Add(player);    
         return player.Id;

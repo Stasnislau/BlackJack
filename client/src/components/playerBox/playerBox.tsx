@@ -13,16 +13,16 @@ interface PlayerProps extends PlayerDTO {
 }
 
 const PlayerBox = ({
-    name,
+    name = 'Player',
     hand = [],
-    money,
-    isAI,
-    isCroupier,
-    score,
-    id,
-    bet,
-    hasFinishedTurn,
-    isBlackjack,
+    money = 0,
+    isAI = false,
+    isCroupier = false, 
+    score = 0,
+    id = '',
+    bet = 0,
+    hasFinishedTurn = false,
+    isBlackjack = false,
     isConnected = false
 }: PlayerProps) => {
     if (!id) {

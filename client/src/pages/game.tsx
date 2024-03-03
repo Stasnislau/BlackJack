@@ -13,6 +13,7 @@ const GamePage = () => {
     const queryParams = new URLSearchParams(location.search);
     const name = queryParams.get('name');
     const [isGameStarted, setIsGameStarted] = useState(false);
+    const [isJoined, setIsJoined] = useState(false);
 
     async function startConnection() {
 
@@ -55,6 +56,13 @@ const GamePage = () => {
     }, [gameCode]);
 
     useEffect(() => {
+        if (gameCode && isConnected && !isJoined) {
+            connection.invoke('JoinGame', gameCode, name).catch((err) => console.error(err));
+        }
+    }, [gameCode, isConnected, isJoined]);
+
+
+    useEffect(() => {
         connection.on("reconnect", (message) => {
             if (message === "success" && message.playerId !== "") {
                 setIsConnected(true);
@@ -76,6 +84,7 @@ const GamePage = () => {
             const response = message as GameMessageInterface;
             switch (response.task) {
                 case "start":
+                    console.log("STARTUEM SUKA BLYAT");
                     setIsGameStarted(true);
                     break;
                 case "state":
@@ -84,6 +93,7 @@ const GamePage = () => {
                     break;
                 case "join":
                     console.log('Player Joined:', response.message);
+                    setIsJoined(true);
                     localStorage.setItem("blackJack", JSON.stringify({ localGameCode: gameCode, localPlayerId: response.playerId }));
                     break;
                 case "leave":
@@ -104,7 +114,9 @@ const GamePage = () => {
     }, []);
 
     return (
-        <div>
+        <div className='
+        flex flex-col items-center justify-center h-screen
+        '>
             <h1>Game Page</h1>
             {isConnected ? <p>Connected</p> : <p>Disconnected</p>}
             {gameCode && <p>Game Code: {gameCode}</p>}
@@ -119,7 +131,7 @@ const GamePage = () => {
                     <div>
                         <h2>Game State</h2>
                         <div className="flex space-x-4">
-                            {gameState.players.map((player) => (
+                            {gameState && gameState.players && gameState.players.length > 0 && gameState.players.map((player) => (
                                 <PlayerBox key={player.id} {...player} />
                             ))}
                         </div>
