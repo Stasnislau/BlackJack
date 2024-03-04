@@ -160,6 +160,7 @@ public class GameHub : Hub
             bool result = _gameSessionsManager.ReconnectPlayer(Context.ConnectionId, playerId, gameCode);
             if (result)
             {
+                Console.WriteLine("Successfully reconnected " + playerId);
                 await Groups.AddToGroupAsync(Context.ConnectionId, gameCode);
                 await Clients.Group(gameCode).SendAsync("GameMessage", new
                 {

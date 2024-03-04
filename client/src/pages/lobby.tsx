@@ -11,8 +11,6 @@ const Lobby = () => {
     const [isGameCreated, setIsGameCreated] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
 
-    
-
     useEffect(() => {
         async function startConnection() {
 

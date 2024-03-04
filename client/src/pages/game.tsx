@@ -30,6 +30,9 @@ const GamePage = () => {
                         connection.invoke('Reconnect', gameCode, localPlayerId).catch((err) => console.error(err));
                         return;
                     }
+                    else {
+                        localStorage.removeItem("blackJack");
+                    }
                 }
                 connection.invoke('JoinGame', gameCode, name).catch((err) => console.error(err));
             } catch (err) {
@@ -63,23 +66,6 @@ const GamePage = () => {
 
 
     useEffect(() => {
-        connection.on("reconnect", (message) => {
-            if (message === "success" && message.playerId !== "") {
-                setIsConnected(true);
-                console.log('Reconnected');
-            } else if (message === "failed") {
-                localStorage.removeItem("blackJack");
-                console.error('Reconnect failed');
-                startConnection();
-            }
-        });
-
-        return () => {
-            connection.off("reconnect");
-        };
-    }, [gameCode, isConnected]);
-
-    useEffect(() => {
         connection.on("GameMessage", (message) => {
             const response = message as GameMessageInterface;
             switch (response.task) {
@@ -90,6 +76,17 @@ const GamePage = () => {
                 case "state":
                     setGameState(response.gameState!);
                     console.log('Game State Updated:', response.gameState);
+                    break;
+                case "reconnect":
+                    console.log('Reconnected:', response.message);
+                    if (response.message === "success" && response.playerId !== "") {
+                        setIsConnected(true);
+                        console.log('Reconnected');
+                    } else if (response.message === "failure") {
+                        localStorage.removeItem("blackJack");
+                        console.log('Reconnect failed', isConnected);
+                        startConnection();
+                    }
                     break;
                 case "join":
                     console.log('Player Joined:', response.message);

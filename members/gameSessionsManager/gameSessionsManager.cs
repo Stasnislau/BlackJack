@@ -87,7 +87,7 @@ public class GameSessionsManager
 
     public bool ReconnectPlayer(string connectionId, string playerId, string gameCode)
     {
-        if (_playerConnectionMap.ContainsKey(playerId) && _playerConnectionMap[playerId] != connectionId && _gameCodeGameMap[gameCode].Players.Any(p => p.Id == playerId))
+        if (!_playerConnectionMap.ContainsKey(playerId) || _playerConnectionMap[playerId] == connectionId || !_gameCodeGameMap[gameCode].Players.Any(p => p.Id == playerId))
         {
             return false;
         }
