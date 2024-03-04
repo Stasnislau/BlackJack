@@ -46,7 +46,7 @@ public class BlackjackGame
     public string AddHumanPlayer(string name)
     {
         var player = new HumanPlayer(name);
-        Players.Add(player);    
+        Players.Add(player);
         return player.Id;
     }
 
@@ -147,7 +147,7 @@ public class BlackjackGame
         return results;
     }
 
-    public GameState GetGameState(string playerId)
+    public GameState GetSpecificGameState(string playerId)
     {
         var CroupierHand = Croupier.Hand.Select((card, index) => new CardDTO(CurrentPlayerId == Croupier.Id || Croupier.HasFinishedTurn || index == 0, card.Rank, card.Suit)).ToList();
         var playersList = Players.Select(player => new PlayerDTO(
@@ -193,6 +193,29 @@ public class BlackjackGame
         );
     }
 
+    public GameState GetGeneralGameState()
+    {
+        return new GameState(
+            CurrentPlayerId,
+            IsGameOver,
+            IsGamePaused,
+            Players.Select(player => new PlayerDTO(
+                player.Name,
+                player.Hand.Select(card => new CardDTO(player.HasFinishedTurn, card.Rank, card.Suit)).ToList(),
+                player.Money,
+                player is AIPlayer,
+                player is Croupier,
+                player.HasFinishedTurn ? player.Score : 0,
+                player.Id,
+                player.Bet,
+                player.HasFinishedTurn,
+                player.Hand.Count == 2 && player.Score == 21
+            )).ToList(),
+            DetermineResults()
+        );
+    }
+
+
     public void MakeAIAction()
     {
         if (CurrentPlayerId == Croupier.Id)
@@ -218,4 +241,42 @@ public class BlackjackGame
         }
     }
 
+    public GameState Hit(string playerId)
+    {
+        if (playerId != CurrentPlayerId)
+        {
+            return GetSpecificGameState(playerId);
+        }
+        Player currentPlayer = Players.Find(player => player.Id == playerId);
+        if (currentPlayer == null)
+        {
+            return GetGeneralGameState();
+        }
+        currentPlayer.Draw(Deck);
+        if (currentPlayer.Score >= 21)
+        {
+            currentPlayer.HasFinishedTurn = true;
+            NextPlayer();
+        }
+        return GetSpecificGameState(playerId);
+    }
+
+    public GameState Stand(string playerId)
+    {
+        if (playerId != CurrentPlayerId)
+        {
+            return GetSpecificGameState(playerId);
+        }
+        Player currentPlayer = Players.Find(player => player.Id == playerId);
+        if (currentPlayer == null)
+        {
+            return GetGeneralGameState();
+        }
+        currentPlayer.Stand();
+        NextPlayer();
+        return GetSpecificGameState(playerId);
+    }
+
+
+// FIX the way the state is sent, it should be unique for everyone
 }

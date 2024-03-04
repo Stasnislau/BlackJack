@@ -148,6 +148,13 @@ public class GameHub : Hub
                     connectionId = Context.ConnectionId,
                     message = "success"
                 });
+                await Clients.Caller.SendAsync("GameMessage", new
+                {
+                    task = "state",
+                    gameCode,
+                    gameState = _gameSessionsManager.GetSpecificGameState(gameCode, playerId)
+                    
+                });
             }
             else
             {
@@ -163,6 +170,57 @@ public class GameHub : Hub
         catch (Exception e)
         {
             Console.WriteLine("Error reconnecting " + e.Message);
+        }
+
+    }
+
+    public async Task Hit(string gameCode, string playerId)
+    {
+        try
+        {
+            var gameStateSpecific = _gameSessionsManager.Hit(gameCode, playerId);
+            var gameState = _gameSessionsManager.GetGeneralGameState(gameCode);
+            await Clients.OthersInGroup(gameCode).SendAsync("GameMessage", new
+            {
+                task = "state",
+                gameCode,
+                gameState
+            });
+            await Clients.Caller.SendAsync("GameMessage", new
+            {
+                task = "state",
+                gameCode,
+                gameState = gameStateSpecific
+            });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error hitting " + e.Message);
+        }
+    }
+
+    public async Task Stand(string gameCode, string playerId)
+    {
+        try
+        {
+            var gameStateSpecific = _gameSessionsManager.Stand(gameCode, playerId);
+            var gameState = _gameSessionsManager.GetGeneralGameState(gameCode);
+            await Clients.OthersInGroup(gameCode).SendAsync("GameMessage", new
+            {
+                task = "state",
+                gameCode,
+                gameState
+            });
+            await Clients.Caller.SendAsync("GameMessage", new
+            {
+                task = "state",
+                gameCode,
+                gameState = gameStateSpecific
+            });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error standing " + e.Message);
         }
     }
 }

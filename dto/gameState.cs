@@ -61,8 +61,8 @@ namespace DTOs
         public CardDTO(bool isRevealed, Rank rank, Suit suit)
         {
             IsRevealed = isRevealed;
-            Rank = rank;
-            Suit = suit;
+            Rank = isRevealed ? rank : Rank.hidden;
+            Suit = isRevealed ? suit : Suit.hidden;
         }
     }
 }

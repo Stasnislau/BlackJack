@@ -28,8 +28,7 @@ public class GameSessionsManager
             throw new ArgumentException("Session not found");
         }
         game.StartGame();
-        string playerId = GetPlayerId(connectionId);
-        return game.GetGameState(playerId);
+        return game.GetGeneralGameState();
     }
 
     public string AddHumanPlayerToSession(string gameCode, string name, string connectionId)
@@ -75,14 +74,24 @@ public class GameSessionsManager
         _gameCodeGameMap.Remove(gameCode);
     }
 
-    public GameState? GetGameState(string gameCode, string playerId)
+    public GameState? GetGeneralGameState(string gameCode)
     {
         var game = GetGame(gameCode);
         if (game == null)
         {
             return null;
         }
-        return game.GetGameState(playerId);
+        return game.GetGeneralGameState();
+    }
+
+    public GameState? GetSpecificGameState(string gameCode, string playerId)
+    {
+        var game = GetGame(gameCode);
+        if (game == null)
+        {
+            return null;
+        }
+        return game.GetSpecificGameState(playerId);
     }
 
     public bool ReconnectPlayer(string connectionId, string playerId, string gameCode)
@@ -105,5 +114,25 @@ public class GameSessionsManager
     public bool IsGameSessionAvailable(string gameId)
     {
         return _gameCodeGameMap.ContainsKey(gameId);
+    }
+
+    public GameState Hit(string gameCode, string playerId)
+    {
+        var game = GetGame(gameCode);
+        if (game == null)
+        {
+            throw new ArgumentException("Session not found");
+        }
+        return game.Hit(playerId);
+    }
+
+    public GameState Stand(string gameCode, string playerId)
+    {
+        var game = GetGame(gameCode);
+        if (game == null)
+        {
+            throw new ArgumentException("Session not found");
+        }
+        return game.Stand(playerId);
     }
 }
