@@ -65,4 +65,41 @@ namespace DTOs
             Suit = isRevealed ? suit : Suit.hidden;
         }
     }
+
+    public class StateDTO
+    {
+
+        public string playerId { get; set; }
+        public GameState gameState { get; set; }
+
+        public StateDTO(string playerId, GameState gameState)
+        {
+            this.playerId = playerId;
+            this.gameState = gameState;
+        }
+
+        public StateDTO(StateDTO stateDTO)
+        {
+            this.playerId = stateDTO.playerId;
+            this.gameState = stateDTO.gameState;
+        }
+    }
+
+    public class BroadCastDto : StateDTO
+    {
+        public string connectionId { get; set; }
+
+        public string gameCode { get; set; }
+
+        public BroadCastDto(string playerId, GameState gameState, string connectionId) : base(playerId, gameState)
+        {
+            this.connectionId = connectionId;
+        }
+
+        public BroadCastDto(string connectionId, StateDTO gameState, string gameCode) : base(gameState)
+        {
+            this.connectionId = connectionId;
+            this.gameCode = gameCode;
+        }
+    }
 }

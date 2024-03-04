@@ -1,3 +1,4 @@
+using DTOs;
 using Microsoft.AspNetCore.SignalR;
 
 public class GameHub : Hub
@@ -7,6 +8,27 @@ public class GameHub : Hub
     public GameHub(GameSessionsManager gameSessionsManager)
     {
         _gameSessionsManager = gameSessionsManager;
+    }
+
+    private async Task BroadcastGameState(string gameCode)
+    {
+        try {
+        var broadCastDTOs = _gameSessionsManager.GetGameStatesForBroadcast(gameCode);
+        foreach (var broadCastDto in broadCastDTOs)
+        {
+            await Clients.Client(broadCastDto.connectionId).SendAsync("GameMessage", new
+            {
+                task = "state",
+                broadCastDto.gameCode,
+                broadCastDto.gameState,
+                broadCastDto.playerId
+            });
+        }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Unable to broadcast. " + e.Message);
+        }
     }
 
     public async Task CreateGame()
@@ -88,13 +110,8 @@ public class GameHub : Hub
                 gameCode,
                 message = "The game has started.",
             });
-            var gameState = _gameSessionsManager.StartGame(gameCode, Context.ConnectionId);
-            await Clients.Group(gameCode).SendAsync("GameMessage", new
-            {
-                task = "state",
-                gameCode,
-                gameState
-            });
+            _gameSessionsManager.StartGame(gameCode, Context.ConnectionId);
+
         }
         catch (Exception e)
         {
@@ -124,7 +141,11 @@ public class GameHub : Hub
         try
         {
             bool result = _gameSessionsManager.IsGameSessionAvailable(gameCode);
-            await Clients.Caller.SendAsync("GameMessage", result);
+            await Clients.Caller.SendAsync("GameMessage", new {
+                task = "available",
+                gameCode,
+                message = result
+            });
         }
         catch (Exception e)
         {
@@ -152,8 +173,8 @@ public class GameHub : Hub
                 {
                     task = "state",
                     gameCode,
-                    gameState = _gameSessionsManager.GetSpecificGameState(gameCode, playerId)
-                    
+                    gameState = _gameSessionsManager.GetGameState(gameCode, playerId)
+
                 });
             }
             else
@@ -178,20 +199,9 @@ public class GameHub : Hub
     {
         try
         {
-            var gameStateSpecific = _gameSessionsManager.Hit(gameCode, playerId);
-            var gameState = _gameSessionsManager.GetGeneralGameState(gameCode);
-            await Clients.OthersInGroup(gameCode).SendAsync("GameMessage", new
-            {
-                task = "state",
-                gameCode,
-                gameState
-            });
-            await Clients.Caller.SendAsync("GameMessage", new
-            {
-                task = "state",
-                gameCode,
-                gameState = gameStateSpecific
-            });
+            _gameSessionsManager.Hit(gameCode, playerId);
+            await BroadcastGameState(gameCode);
+            
         }
         catch (Exception e)
         {
@@ -203,20 +213,8 @@ public class GameHub : Hub
     {
         try
         {
-            var gameStateSpecific = _gameSessionsManager.Stand(gameCode, playerId);
-            var gameState = _gameSessionsManager.GetGeneralGameState(gameCode);
-            await Clients.OthersInGroup(gameCode).SendAsync("GameMessage", new
-            {
-                task = "state",
-                gameCode,
-                gameState
-            });
-            await Clients.Caller.SendAsync("GameMessage", new
-            {
-                task = "state",
-                gameCode,
-                gameState = gameStateSpecific
-            });
+            _gameSessionsManager.Stand(gameCode, playerId);
+            await BroadcastGameState(gameCode);
         }
         catch (Exception e)
         {

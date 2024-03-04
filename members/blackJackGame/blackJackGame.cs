@@ -59,6 +59,10 @@ public class BlackjackGame
     public void RemovePlayer(string id)
     {
         Players.RemoveAll(player => player.Id == id);
+        if (Players.Count == 0)
+        {
+            EndGame();
+        }
     }
     public void NextPlayer()
     {
@@ -147,7 +151,7 @@ public class BlackjackGame
         return results;
     }
 
-    public GameState GetSpecificGameState(string playerId)
+    public GameState GetGameState(string playerId)
     {
         var CroupierHand = Croupier.Hand.Select((card, index) => new CardDTO(CurrentPlayerId == Croupier.Id || Croupier.HasFinishedTurn || index == 0, card.Rank, card.Suit)).ToList();
         var playersList = Players.Select(player => new PlayerDTO(
@@ -193,30 +197,7 @@ public class BlackjackGame
         );
     }
 
-    public GameState GetGeneralGameState()
-    {
-        return new GameState(
-            CurrentPlayerId,
-            IsGameOver,
-            IsGamePaused,
-            Players.Select(player => new PlayerDTO(
-                player.Name,
-                player.Hand.Select(card => new CardDTO(player.HasFinishedTurn, card.Rank, card.Suit)).ToList(),
-                player.Money,
-                player is AIPlayer,
-                player is Croupier,
-                player.HasFinishedTurn ? player.Score : 0,
-                player.Id,
-                player.Bet,
-                player.HasFinishedTurn,
-                player.Hand.Count == 2 && player.Score == 21
-            )).ToList(),
-            DetermineResults()
-        );
-    }
-
-
-    public void MakeAIAction()
+    public StateDTO[] MakeAIAction()
     {
         if (CurrentPlayerId == Croupier.Id)
         {
@@ -224,12 +205,12 @@ public class BlackjackGame
             {
                 Croupier.DoAction(Deck);
             }
-            return;
+            return GetAllGameStates();
         }
         AIPlayer currentPlayer = (AIPlayer)Players.Find(player => player.Id == CurrentPlayerId);
         if (currentPlayer == null)
         {
-            return;
+            return GetAllGameStates();
         }
         while (!currentPlayer.HasFinishedTurn)
         {
@@ -239,18 +220,19 @@ public class BlackjackGame
         {
             NextPlayer();
         }
+        return GetAllGameStates();
     }
 
-    public GameState Hit(string playerId)
+    public void Hit(string playerId)
     {
         if (playerId != CurrentPlayerId)
         {
-            return GetSpecificGameState(playerId);
+            throw new ArgumentException("Not your turn");
         }
         Player currentPlayer = Players.Find(player => player.Id == playerId);
         if (currentPlayer == null)
         {
-            return GetGeneralGameState();
+            throw new ArgumentException("Player not found");
         }
         currentPlayer.Draw(Deck);
         if (currentPlayer.Score >= 21)
@@ -258,25 +240,38 @@ public class BlackjackGame
             currentPlayer.HasFinishedTurn = true;
             NextPlayer();
         }
-        return GetSpecificGameState(playerId);
     }
 
-    public GameState Stand(string playerId)
+    public void Stand(string playerId)
     {
         if (playerId != CurrentPlayerId)
         {
-            return GetSpecificGameState(playerId);
+            throw new ArgumentException("Not your turn");
         }
         Player currentPlayer = Players.Find(player => player.Id == playerId);
         if (currentPlayer == null)
         {
-            return GetGeneralGameState();
+            throw new ArgumentException("Player not found");
         }
         currentPlayer.Stand();
         NextPlayer();
-        return GetSpecificGameState(playerId);
+    }
+
+    public StateDTO[] GetAllGameStates()
+    {
+        List<StateDTO> states = new List<StateDTO>();
+        foreach (Player player in Players)
+        {
+            if (player is AIPlayer)
+            {
+                continue;
+            }
+            states.Add(new StateDTO(player.Id, GetGameState(player.Id)));
+        }
+        states.Add(new StateDTO(Croupier.Id, GetGameState(Croupier.Id)));
+        return states.ToArray();
     }
 
 
-// FIX the way the state is sent, it should be unique for everyone
+    // FIX the way the state is sent, it should be unique for everyone
 }

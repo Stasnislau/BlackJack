@@ -7,6 +7,7 @@ public class GameSessionsManager
 
     private readonly Dictionary<string, string> _playerConnectionMap = new(); //  playerId, connectionId
 
+
     private BlackjackGame? GetGame(string gameCode)
     {
         var result = _gameCodeGameMap.TryGetValue(gameCode, out var game) ? game : null;
@@ -20,15 +21,15 @@ public class GameSessionsManager
         return gameCode;
     }
 
-    public GameState StartGame(string gameCode, string connectionId)
+    public void StartGame(string gameCode, string connectionId)
     {
         var game = GetGame(gameCode);
+        string playerId = _connectionSessionMap[connectionId];
         if (game == null)
         {
             throw new ArgumentException("Session not found");
         }
         game.StartGame();
-        return game.GetGeneralGameState();
     }
 
     public string AddHumanPlayerToSession(string gameCode, string name, string connectionId)
@@ -74,24 +75,14 @@ public class GameSessionsManager
         _gameCodeGameMap.Remove(gameCode);
     }
 
-    public GameState? GetGeneralGameState(string gameCode)
+    public GameState? GetGameState(string gameCode, string playerId)
     {
         var game = GetGame(gameCode);
         if (game == null)
         {
             return null;
         }
-        return game.GetGeneralGameState();
-    }
-
-    public GameState? GetSpecificGameState(string gameCode, string playerId)
-    {
-        var game = GetGame(gameCode);
-        if (game == null)
-        {
-            return null;
-        }
-        return game.GetSpecificGameState(playerId);
+        return game.GetGameState(playerId);
     }
 
     public bool ReconnectPlayer(string connectionId, string playerId, string gameCode)
@@ -116,23 +107,43 @@ public class GameSessionsManager
         return _gameCodeGameMap.ContainsKey(gameId);
     }
 
-    public GameState Hit(string gameCode, string playerId)
+    public void Hit(string gameCode, string playerId)
     {
         var game = GetGame(gameCode);
         if (game == null)
         {
             throw new ArgumentException("Session not found");
         }
-        return game.Hit(playerId);
+        game.Hit(playerId);
     }
 
-    public GameState Stand(string gameCode, string playerId)
+    public void Stand(string gameCode, string playerId)
     {
         var game = GetGame(gameCode);
         if (game == null)
         {
             throw new ArgumentException("Session not found");
         }
-        return game.Stand(playerId);
+        game.Stand(playerId);
+    }
+
+    public BroadCastDto[] GetGameStatesForBroadcast(string gameCode)
+    {
+        var game = GetGame(gameCode);
+        if (game == null)
+        {
+            throw new ArgumentException("Session not found");
+        }
+        var states = game.GetAllGameStates();
+        var broadcastDTOs = new List<BroadCastDto>();
+        foreach (var state in states)
+        {
+            if (_playerConnectionMap.TryGetValue(state.playerId, out var connectionId))
+            {
+                broadcastDTOs.Add(new BroadCastDto(connectionId, state, gameCode));
+            }
+        }
+        return broadcastDTOs.ToArray();
+
     }
 }
