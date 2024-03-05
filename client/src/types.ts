@@ -21,6 +21,7 @@ export interface GameState {
   currentPlayerId: string;
   isGameOver: boolean;
   isGamePaused: boolean;
+  isGameStarted: boolean;
   players: PlayerDTO[];
   results: Record<string, string>;
 }

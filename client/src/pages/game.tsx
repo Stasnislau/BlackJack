@@ -8,13 +8,14 @@ import { Context } from '../main';
 const GamePage = () => {
     const [isConnected, setIsConnected] = useState(connection.state === "Connected");
     const [gameState, setGameState] = useState({} as GameState);
+    const [userId, setUserId] = useState('');
     const { gameCode } = useParams();
     const location = useLocation();
     const store = useContext(Context);
 
     const queryParams = new URLSearchParams(location.search);
     const name = queryParams.get('name');
-    const [isGameStarted, setIsGameStarted] = useState(false);
+    const [isGameStarted, setIsGameStarted] = useState(gameState.isGameStarted || false);
     const [isJoined, setIsJoined] = useState(false);
 
     async function startConnection() {
@@ -86,6 +87,7 @@ const GamePage = () => {
                     break;
                 case "state":
                     setGameState(response.gameState!);
+                    setIsGameStarted(response.gameState!.isGameStarted);
                     console.log('Game State Updated:', response.gameState);
                     break;
                 case "reconnect":
@@ -123,34 +125,50 @@ const GamePage = () => {
     }, []);
 
     return (
-        <div className='
-        flex flex-col items-center justify-center h-screen
-        '>
-            <h1>Game Page</h1>
-            {isConnected ? <p>Connected</p> : <p>Disconnected</p>}
-            {gameCode && <p>Game Code: {gameCode}</p>}
-            {!isGameStarted && <p>Waiting for players...</p>}
-            {isJoined && <p>Joined</p>}
+        <div className='flex flex-col items-center justify-center h-screen text-white'>
+            <h1 className="text-4xl font-bold mb-4">Game Page</h1>
+            {isConnected ? <p className="text-green-400">Connected</p> : <p className="text-red-400">Disconnected</p>}
+            {gameCode && <p className="text-lg mb-2">Game Code: <span className="text-yellow-300">{gameCode}</span></p>}
+            {!isGameStarted && <p className="italic mb-3">Waiting for players...</p>}
+            {isJoined && <p className="text-green-500 mb-3">Joined</p>}
 
             {!isGameStarted &&
-                <button onClick={() => connection.invoke('StartGame', gameCode).catch((err) => console.error(err))}>Start Game</button>
+                <button
+                    onClick={() => connection.invoke('StartGame', gameCode).catch((err) => console.error(err))}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-3"
+                >
+                    Start Game
+                </button>
             }
-
 
             {
                 isGameStarted && (
-                    <div>
-                        <h2>Game State</h2>
-                        <div className="flex space-x-4">
+                    <div className="text-center">
+                        <h2 className="text-2xl font-semibold mb-2">Game State</h2>
+                        <div className="flex flex-wrap justify-center gap-4 mb-4">
                             {gameState && gameState.players && gameState.players.length > 0 && gameState.players.map((player) => (
                                 <PlayerBox key={player.id} {...player} />
                             ))}
+                        </div>
+                        <div className="space-x-2">
+                            <button
+                                onClick={() => connection.invoke('Stand', gameCode).catch((err) => console.error(err))}
+                                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            >
+                                Stand
+                            </button>
+                            <button
+                                onClick={() => connection.invoke('Hit', gameCode).catch((err) => console.error(err))}
+                                className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            >
+                                Hit
+                            </button>
                         </div>
                     </div>
                 )
             }
         </div >
     );
-};
+}
 
 export default GamePage;

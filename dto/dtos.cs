@@ -7,16 +7,18 @@ namespace DTOs
         public bool IsGameOver { get; set; }
 
         public bool IsGamePaused { get; set; }
+        public bool IsGameStarted { get; set; }
 
         public List<PlayerDTO> Players { get; set; }
 
         public Dictionary<string, string> Results { get; set; }
 
-        public GameState(string currentPlayerId, bool isGameOver, bool isGamePaused, List<PlayerDTO> players, Dictionary<string, string> results)
+        public GameState(string currentPlayerId, bool isGameOver, bool isGamePaused, bool isGameStarted, List<PlayerDTO> players, Dictionary<string, string> results)
         {
             CurrentPlayerId = currentPlayerId;
             IsGameOver = isGameOver;
             IsGamePaused = isGamePaused;
+            IsGameStarted = isGameStarted;
             Players = players;
             Results = results;
         }

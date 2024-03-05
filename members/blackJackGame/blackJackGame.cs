@@ -14,6 +14,8 @@ public class BlackjackGame
 
     public bool IsGamePaused { get; set; }
 
+    public bool isGameStarted { get; set; }
+
 
 
     public BlackjackGame()
@@ -25,10 +27,16 @@ public class BlackjackGame
         CurrentPlayerId = "";
         Bet = 10;
         IsGamePaused = false;
+        isGameStarted = false;
     }
 
     public void StartGame()
     {
+        if (Players.Count < 1)
+        {
+            throw new ArgumentException("Not enough players");
+        }
+        isGameStarted = true;
         Players.ForEach(player => player.SetBet(Bet));
         Croupier.SetBet(Bet);
         Deck.PopulateDeck();
@@ -45,6 +53,10 @@ public class BlackjackGame
 
     public string AddHumanPlayer(string name)
     {
+        if (isGameStarted)
+        {
+            throw new InvalidOperationException("Game already started");
+        }
         var player = new HumanPlayer(name);
         Players.Add(player);
         return player.Id;
@@ -52,12 +64,20 @@ public class BlackjackGame
 
     public void AddAIPlayer()
     {
+        if (isGameStarted)
+        {
+            throw new InvalidOperationException("Game already started");
+        }
         string name = "AI" + new Random().Next(1000, 9999);
         Players.Add(new AIPlayer(name));
     }
 
     public void RemovePlayer(string id)
     {
+        if (isGameStarted)
+        {
+            throw new InvalidOperationException("Game already started");
+        }
         Players.RemoveAll(player => player.Id == id);
         if (Players.Count == 0)
         {
@@ -88,6 +108,7 @@ public class BlackjackGame
     public void ResetGame()
     {
         IsGameOver = false;
+        isGameStarted = false;
         CurrentPlayerId = "";
         Croupier.ResetHand();
         foreach (Player player in Players)
@@ -99,6 +120,10 @@ public class BlackjackGame
     public Dictionary<string, string> DetermineResults()
     {
         if (!IsGameOver)
+        {
+            return new Dictionary<string, string>();
+        }
+        if (!isGameStarted)
         {
             return new Dictionary<string, string>();
         }
@@ -172,6 +197,7 @@ public class BlackjackGame
                 CurrentPlayerId,
                 IsGameOver,
                 IsGamePaused,
+                isGameStarted,
                 playersList,
                 DetermineResults()
             );
@@ -192,6 +218,7 @@ public class BlackjackGame
             CurrentPlayerId,
             IsGameOver,
             IsGamePaused,
+            isGameStarted,
             playersList,
             DetermineResults()
         );
@@ -225,6 +252,13 @@ public class BlackjackGame
 
     public void Hit(string playerId)
     {
+        if (!isGameStarted) {
+            throw new InvalidOperationException("Game not started");
+        }
+        if (IsGameOver)
+        {
+            throw new InvalidOperationException("Game is over");
+        }
         if (playerId != CurrentPlayerId)
         {
             throw new ArgumentException("Not your turn");
@@ -244,6 +278,13 @@ public class BlackjackGame
 
     public void Stand(string playerId)
     {
+        if (!isGameStarted) {
+            throw new InvalidOperationException("Game not started");
+        }
+        if (IsGameOver)
+        {
+            throw new InvalidOperationException("Game is over");
+        }
         if (playerId != CurrentPlayerId)
         {
             throw new ArgumentException("Not your turn");
@@ -271,7 +312,4 @@ public class BlackjackGame
         states.Add(new StateDTO(Croupier.Id, GetGameState(Croupier.Id)));
         return states.ToArray();
     }
-
-
-    // FIX the way the state is sent, it should be unique for everyone
 }
