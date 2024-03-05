@@ -104,14 +104,13 @@ public class GameHub : Hub
     {
         try
         {
+            _gameSessionsManager.StartGame(gameCode);
             await Clients.Group(gameCode).SendAsync("GameMessage", new
             {
                 task = "start",
                 gameCode,
                 message = "The game has started.",
             });
-            _gameSessionsManager.StartGame(gameCode, Context.ConnectionId);
-
         }
         catch (Exception e)
         {

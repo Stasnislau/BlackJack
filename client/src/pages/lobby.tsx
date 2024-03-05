@@ -17,8 +17,6 @@ const Lobby = () => {
             if (connection.state === "Disconnected") {
                 try {
                     await connection.start();
-                    console.log('SignalR Connected.');
-                    
                     setIsConnected(true);
                 } catch (err) {
                     console.error('SignalR Connection Error: ', err);
@@ -31,15 +29,9 @@ const Lobby = () => {
         }
 
         connection.onclose(() => {
-            console.log('SignalR Disconnected.');
             setIsConnected(false);
             startConnection();
         });
-
-        return () => {
-            if (connection.state === "Connected")
-                connection.stop();
-        };
     }, []);
 
     const handleCreateGame = async () => {
@@ -52,11 +44,13 @@ const Lobby = () => {
                 setGameCode(response.gameCode);
                 setIsGameCreated(true);
             }
-            
+
         });
 
         return () => {
-            connection.off("GameMessage");
+            if (connection.state === "Connected") {
+                connection.off("GameMessage");
+            }
         };
     }, []);
 

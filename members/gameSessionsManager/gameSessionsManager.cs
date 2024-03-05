@@ -21,13 +21,16 @@ public class GameSessionsManager
         return gameCode;
     }
 
-    public void StartGame(string gameCode, string connectionId)
+    public void StartGame(string gameCode)
     {
         var game = GetGame(gameCode);
-        string playerId = _connectionSessionMap[connectionId];
         if (game == null)
         {
             throw new ArgumentException("Session not found");
+        }
+        if (game.Players.Count < 1)
+        {
+            throw new ArgumentException("Not enough players");
         }
         game.StartGame();
     }
@@ -44,6 +47,7 @@ public class GameSessionsManager
             throw new ArgumentException("Player already in a game");
         }
         var playerId = game.AddHumanPlayer(name);
+        Console.WriteLine("Player added to game: " + playerId);
         _connectionSessionMap[connectionId] = gameCode;
         _playerConnectionMap[playerId] = connectionId;
         return playerId;
