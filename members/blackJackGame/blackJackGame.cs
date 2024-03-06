@@ -179,6 +179,11 @@ public class BlackjackGame
     public GameState GetGameState(string playerId)
     {
         var CroupierHand = Croupier.Hand.Select((card, index) => new CardDTO(CurrentPlayerId == Croupier.Id || Croupier.HasFinishedTurn || index == 0, card)).ToList();
+        Console.WriteLine(CroupierHand[0].IsRevealed);
+        Console.WriteLine(CroupierHand[1].IsRevealed);
+        Console.WriteLine(Croupier.HasFinishedTurn);
+        Console.WriteLine(CroupierHand.Count == 2);
+        Console.WriteLine(CurrentPlayerId == Croupier.Id);
         var playersList = Players.Select(player => new PlayerDTO(
             player.Name,
             player.Hand.Select(card => new CardDTO(player.HasFinishedTurn || playerId == CurrentPlayerId, card)).ToList(),
@@ -191,20 +196,9 @@ public class BlackjackGame
             player.HasFinishedTurn,
             player.Hand.Count == 2 && player.Score == 21
         )).ToList();
-        if (playerId == Croupier.Id)
-        {
-            return new GameState(
-                CurrentPlayerId,
-                IsGameOver,
-                IsGamePaused,
-                isGameStarted,
-                playersList,
-                DetermineResults()
-            );
-        }
         playersList.Add(new PlayerDTO(
             Croupier.Name,
-            Croupier.Hand.Select(card => new CardDTO(true, card)).ToList(),
+            CroupierHand,
             Croupier.Money,
             false,
             true,
@@ -309,7 +303,6 @@ public class BlackjackGame
             }
             states.Add(new StateDTO(player.Id, GetGameState(player.Id)));
         }
-        states.Add(new StateDTO(Croupier.Id, GetGameState(Croupier.Id)));
         return states.ToArray();
     }
 }

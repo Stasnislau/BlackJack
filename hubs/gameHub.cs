@@ -112,6 +112,7 @@ public class GameHub : Hub
                 gameCode,
                 message = "The game has started.",
             });
+            await BroadcastGameState(gameCode);
         }
         catch (Exception e)
         {

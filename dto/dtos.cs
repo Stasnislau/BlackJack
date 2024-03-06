@@ -63,8 +63,8 @@ namespace DTOs
         public CardDTO(bool isRevealed, Card card)
         {
             IsRevealed = isRevealed;
-            Rank = card.Rank;
-            Suit = card.Suit;
+            Rank = isRevealed ? card.Rank : "Hidden";
+            Suit = isRevealed ? card.Suit : "Hidden";
         }
     }
 

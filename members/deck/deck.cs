@@ -1,7 +1,7 @@
 public class Deck
 {
     private List<string> AvailableSuits = new List<string> { "Hearts", "Diamonds", "Clubs", "Spades" };
-    private List<string> AvailableRanks = new List<string> { "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "en", "Jack", "Queen", "King", "Ace" };
+    private List<string> AvailableRanks = new List<string> { "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King", "Ace" };
     public List<Card> Cards { get; }
 
     public Deck()
@@ -96,6 +96,6 @@ public class Card
     {
         Suit = suit;
         Rank = rank;
-    
+        Value = GetValue();
     }
 }

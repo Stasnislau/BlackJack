@@ -42,13 +42,12 @@ const PlayerBox = ({
     isBlackjack,
     isConnected
 }: PlayerDTO & { isConnected?: boolean }) => {
-    // Conditional rendering based on whether the id is present
     if (!id && !isCroupier) {
         return null;
     }
 
     const boxStyles = `flex flex-col items-center p-4 border rounded shadow-lg m-2 ${isCroupier ? 'absolute top-0 left-1/2 transform -translate-x-1/2' : 'relative'
-        } ${id ? '' : 'border-dashed border-gray-300'} ${isAI || isCroupier ? 'bg-green-100' : 'bg-white'}`;
+        } ${id ? '' : 'border-dashed border-gray-300'} ${isAI || isCroupier ? 'bg-green-100' : 'bg-gray-300'}`;
     console.log('hand', hand)
     return (
         <div className={boxStyles}>
