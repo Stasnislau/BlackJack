@@ -40,7 +40,7 @@ public abstract class Player
         foreach (Card card in Hand)
         {
             newScore += card.Value;
-            if (newScore > 21 && card.Rank == Rank.Ace)
+            if (newScore > 21 && card.Rank == "Ace")
             {
                 newScore -= 10;
             }

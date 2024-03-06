@@ -1,44 +1,15 @@
-public enum Suit
-{
-    hidden = 0,
-    Spades = 1,
-    Hearts,
-    Diamonds,
-    Clubs
-}
-
-public enum Rank
-{
-    hidden = 0,
-    Two = 2,
-    Three,
-    Four,
-    Five,
-    Six,
-    Seven,
-    Eight,
-    Nine,
-    Ten,
-    Jack = 10,
-    Queen = 10,
-    King = 10,
-    Ace = 11
-}
-
-
 public class Deck
 {
-
-
-
+    private List<string> AvailableSuits = new List<string> { "Hearts", "Diamonds", "Clubs", "Spades" };
+    private List<string> AvailableRanks = new List<string> { "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "en", "Jack", "Queen", "King", "Ace" };
     public List<Card> Cards { get; }
 
     public Deck()
     {
         Cards = new List<Card>();
-        foreach (Suit suit in Enum.GetValues(typeof(Suit)))
+        foreach (string suit in AvailableSuits)
         {
-            foreach (Rank rank in Enum.GetValues(typeof(Rank)))
+            foreach (string rank in AvailableRanks)
             {
                 Cards.Add(new Card(suit, rank));
             }
@@ -48,9 +19,9 @@ public class Deck
     public void PopulateDeck()
     {
         Cards.Clear();
-        foreach (Suit suit in Enum.GetValues(typeof(Suit)))
+        foreach (string suit in AvailableSuits)
         {
-            foreach (Rank rank in Enum.GetValues(typeof(Rank)))
+            foreach (string rank in AvailableRanks)
             {
                 Cards.Add(new Card(suit, rank));
             }
@@ -81,20 +52,50 @@ public class Deck
 
 public class Card
 {
-    public Suit Suit { get; }
-    public Rank Rank { get; }
+    public string Suit { get; }
+    public string Rank { get; }
 
-    public int Value
+    public int Value { get; }
+
+    private int GetValue()
     {
-        get
+        switch (Rank)
         {
-            return (int)Rank;
+            case "Two":
+                return 2;
+            case "Three":
+                return 3;
+            case "Four":
+                return 4;
+            case "Five":
+                return 5;
+            case "Six":
+                return 6;
+            case "Seven":
+                return 7;
+            case "Eight":
+                return 8;
+            case "Nine":
+                return 9;
+            case "Ten":
+                return 10;
+            case "Jack":
+                return 10;
+            case "Queen":
+                return 10;
+            case "King":
+                return 10;
+            case "Ace":
+                return 11;
+            default:
+                return 0;
         }
     }
 
-    public Card(Suit suit, Rank rank)
+    public Card(string suit, string rank)
     {
         Suit = suit;
         Rank = rank;
+    
     }
 }

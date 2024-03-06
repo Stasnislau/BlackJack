@@ -57,14 +57,14 @@ namespace DTOs
     {
 
         public bool IsRevealed { get; set; }
-        Rank Rank { get; set; }
-        Suit Suit { get; set; }
+        public string Rank { get; set; }
+        public string Suit { get; set; }
 
-        public CardDTO(bool isRevealed, Rank rank, Suit suit)
+        public CardDTO(bool isRevealed, Card card)
         {
             IsRevealed = isRevealed;
-            Rank = isRevealed ? rank : Rank.hidden;
-            Suit = isRevealed ? suit : Suit.hidden;
+            Rank = card.Rank;
+            Suit = card.Suit;
         }
     }
 
@@ -93,9 +93,10 @@ namespace DTOs
 
         public string gameCode { get; set; }
 
-        public BroadCastDto(string playerId, GameState gameState, string connectionId) : base(playerId, gameState)
+        public BroadCastDto(string playerId, GameState gameState, string connectionId, string gameCode) : base(playerId, gameState)
         {
             this.connectionId = connectionId;
+            this.gameCode = gameCode;
         }
 
         public BroadCastDto(string connectionId, StateDTO gameState, string gameCode) : base(gameState)

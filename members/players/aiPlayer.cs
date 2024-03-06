@@ -18,7 +18,7 @@ public class AIPlayer : Player
         {
             Draw(deck);
         }
-        else if (Score == 17 && Hand.Count(card => card.Rank == Rank.Ace) == 1)
+        else if (Score == 17 && Hand.Count(card => card.Rank == "Ace") == 1)
         {
             Draw(deck);
         }

@@ -14,6 +14,7 @@ public class GameHub : Hub
     {
         try {
         var broadCastDTOs = _gameSessionsManager.GetGameStatesForBroadcast(gameCode);
+        Console.WriteLine(broadCastDTOs[0].gameState.Players[0].Hand);
         foreach (var broadCastDto in broadCastDTOs)
         {
             await Clients.Client(broadCastDto.connectionId).SendAsync("GameMessage", new

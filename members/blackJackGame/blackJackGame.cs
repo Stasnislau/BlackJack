@@ -178,10 +178,10 @@ public class BlackjackGame
 
     public GameState GetGameState(string playerId)
     {
-        var CroupierHand = Croupier.Hand.Select((card, index) => new CardDTO(CurrentPlayerId == Croupier.Id || Croupier.HasFinishedTurn || index == 0, card.Rank, card.Suit)).ToList();
+        var CroupierHand = Croupier.Hand.Select((card, index) => new CardDTO(CurrentPlayerId == Croupier.Id || Croupier.HasFinishedTurn || index == 0, card)).ToList();
         var playersList = Players.Select(player => new PlayerDTO(
             player.Name,
-            player.Hand.Select(card => new CardDTO(player.HasFinishedTurn || playerId == CurrentPlayerId, card.Rank, card.Suit)).ToList(),
+            player.Hand.Select(card => new CardDTO(player.HasFinishedTurn || playerId == CurrentPlayerId, card)).ToList(),
             player.Money,
             player is AIPlayer,
             player is Croupier,
@@ -204,7 +204,7 @@ public class BlackjackGame
         }
         playersList.Add(new PlayerDTO(
             Croupier.Name,
-            Croupier.Hand.Select(card => new CardDTO(true, card.Rank, card.Suit)).ToList(),
+            Croupier.Hand.Select(card => new CardDTO(true, card)).ToList(),
             Croupier.Money,
             false,
             true,
