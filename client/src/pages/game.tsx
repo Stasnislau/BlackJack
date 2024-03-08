@@ -8,7 +8,7 @@ import { Context } from '../main';
 const GamePage = () => {
     const [isConnected, setIsConnected] = useState(connection.state === "Connected");
     const [gameState, setGameState] = useState({} as GameState);
-    const [userId, setUserId] = useState('');
+    const [playerId, setPlayerId] = useState('');
     const { gameCode } = useParams();
     const location = useLocation();
     const store = useContext(Context);
@@ -106,6 +106,7 @@ const GamePage = () => {
                     console.log('Player Joined:', response.message);
                     setIsJoined(true);
                     localStorage.setItem("blackJack", JSON.stringify({ localGameCode: gameCode, localPlayerId: response.playerId }));
+                    setPlayerId(JSON.stringify(response.playerId))
                     break;
                 case "leave":
                     console.log('Player Left:', response.message);
@@ -147,23 +148,25 @@ const GamePage = () => {
                         <h2 className="text-2xl font-semibold mb-2">Game State</h2>
                         <div className="flex flex-wrap justify-center gap-4 mb-4">
                             {gameState && gameState.players && gameState.players.length > 0 && gameState.players.map((player) => (
-                                <PlayerBox key={player.id} {...player} />
+                                <PlayerBox key={player.id} {...player} thisPlayerId={playerId} />
                             ))}
                         </div>
-                        <div className="space-x-2">
-                            <button
-                                onClick={() => connection.invoke('Stand', gameCode).catch((err) => console.error(err))}
-                                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                            >
-                                Stand
-                            </button>
-                            <button
-                                onClick={() => connection.invoke('Hit', gameCode).catch((err) => console.error(err))}
-                                className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                            >
-                                Hit
-                            </button>
-                        </div>
+                        { playerId && isGameStarted &&
+                            <div className="space-x-2">
+                                <button
+                                    onClick={() => connection.invoke('Stand', gameCode).catch((err) => console.error(err))}
+                                    className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                >
+                                    Stand
+                                </button>
+                                <button
+                                    onClick={() => connection.invoke('Hit', gameCode).catch((err) => console.error(err))}
+                                    className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                >
+                                    Hit
+                                </button>
+                            </div>
+                        }
                     </div>
                 )
             }

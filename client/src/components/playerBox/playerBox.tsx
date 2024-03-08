@@ -21,9 +21,9 @@ const Card = ({ isRevealed, rank, suit }: CardDTO) => {
             hover:scale-110
         ">
             <div className={`card ${isRevealed ? 'bg-white' : 'bg-blue-500'}`}>
-                <img 
+                <img
                     className="w-full h-full object-cover"
-                src={cards.find((card) => card.Rank === rank && card.Suit === suit)?.Picture} alt={`${rank} of ${suit}`} />
+                    src={cards.find((card) => card.Rank === rank && card.Suit === suit)?.Picture} alt={`${rank} of ${suit}`} />
             </div>
         </div>
     );
@@ -41,14 +41,13 @@ const PlayerBox = ({
     hasFinishedTurn,
     isBlackjack,
     isConnected
-}: PlayerDTO & { isConnected?: boolean }) => {
+}: PlayerDTO & { isConnected?: boolean, thisPlayerId: string }) => {
     if (!id && !isCroupier) {
         return null;
     }
 
     const boxStyles = `flex flex-col items-center p-4 border rounded shadow-lg m-2 ${isCroupier ? 'absolute top-0 left-1/2 transform -translate-x-1/2' : 'relative'
-        } ${id ? '' : 'border-dashed border-gray-300'} ${isAI || isCroupier ? 'bg-green-100' : 'bg-gray-300'}`;
-    console.log('hand', hand)
+        } ${id ? '' : 'border-dashed border-gray-300'} ${isAI || isCroupier ? 'bg-gray-400' : 'bg-gray-300'}`;
     return (
         <div className={boxStyles}>
             <h3 className="text-lg font-bold">
@@ -61,7 +60,10 @@ const PlayerBox = ({
             </div>
             {!isCroupier && (
                 <>
-                    <p>Score: {score}</p>
+                    {score > 21 ? <p>Busted</p>
+                        :
+                        <p>Score: {score == 0 ? "hidden" : score}</p>
+                    }
                     <p>Money: ${money}</p>
                     <p>Bet: ${bet}</p>
                     {isBlackjack && <p className="text-green-500">Blackjack!</p>}
@@ -71,6 +73,18 @@ const PlayerBox = ({
                     )}
                 </>
             )}
+            {isCroupier && (
+                <>
+                    <p>Score: {score == 0 ? "hidden" : score}</p>
+                    {score > 21 ? <p>Busted</p>
+                        :
+                        <p>Score: {score == 0 ? "hidden" : score}</p>
+                    }
+                    <p>Bet: ${bet}</p>
+                    {isBlackjack && <p className="text-green-500">Blackjack!</p>}
+                </>
+            )}
+
         </div>
     );
 };

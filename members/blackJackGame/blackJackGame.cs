@@ -89,12 +89,21 @@ public class BlackjackGame
         if (CurrentPlayerId == "")
         {
             CurrentPlayerId = Players[0].Id;
+            if (Players[0] is AIPlayer)
+            {
+                while (!Players[0].HasFinishedTurn)
+                {
+                    
+                }
+                MakeAIAction();
+            }
             return;
         }
         int index = Players.FindIndex(player => player.Id == CurrentPlayerId);
         if (index == Players.Count - 1)
         {
             CurrentPlayerId = Croupier.Id;
+
             return;
         }
         CurrentPlayerId = Players[index + 1].Id;
@@ -179,18 +188,13 @@ public class BlackjackGame
     public GameState GetGameState(string playerId)
     {
         var CroupierHand = Croupier.Hand.Select((card, index) => new CardDTO(CurrentPlayerId == Croupier.Id || Croupier.HasFinishedTurn || index == 0, card)).ToList();
-        Console.WriteLine(CroupierHand[0].IsRevealed);
-        Console.WriteLine(CroupierHand[1].IsRevealed);
-        Console.WriteLine(Croupier.HasFinishedTurn);
-        Console.WriteLine(CroupierHand.Count == 2);
-        Console.WriteLine(CurrentPlayerId == Croupier.Id);
         var playersList = Players.Select(player => new PlayerDTO(
             player.Name,
             player.Hand.Select(card => new CardDTO(player.HasFinishedTurn || playerId == CurrentPlayerId, card)).ToList(),
             player.Money,
             player is AIPlayer,
             player is Croupier,
-            player.HasFinishedTurn ? player.Score : 0,
+            player.HasFinishedTurn || CurrentPlayerId == playerId ? player.Score : 0,
             player.Id,
             player.Bet,
             player.HasFinishedTurn,
@@ -202,7 +206,7 @@ public class BlackjackGame
             Croupier.Money,
             false,
             true,
-            Croupier.HasFinishedTurn ? Croupier.Score : 0,
+            Croupier.HasFinishedTurn || CurrentPlayerId == Croupier.Id ? Croupier.Score : 0,
             Croupier.Id,
             Croupier.Bet,
             Croupier.HasFinishedTurn,
@@ -218,7 +222,7 @@ public class BlackjackGame
         );
     }
 
-    public StateDTO[] MakeAIAction()
+    public void MakeAIAction()
     {
         if (CurrentPlayerId == Croupier.Id)
         {
@@ -226,12 +230,12 @@ public class BlackjackGame
             {
                 Croupier.DoAction(Deck);
             }
-            return GetAllGameStates();
+            EndGame();
         }
         AIPlayer currentPlayer = (AIPlayer)Players.Find(player => player.Id == CurrentPlayerId);
         if (currentPlayer == null)
         {
-            return GetAllGameStates();
+            return;
         }
         while (!currentPlayer.HasFinishedTurn)
         {
@@ -241,12 +245,12 @@ public class BlackjackGame
         {
             NextPlayer();
         }
-        return GetAllGameStates();
     }
 
     public void Hit(string playerId)
     {
-        if (!isGameStarted) {
+        if (!isGameStarted)
+        {
             throw new InvalidOperationException("Game not started");
         }
         if (IsGameOver)
@@ -272,7 +276,8 @@ public class BlackjackGame
 
     public void Stand(string playerId)
     {
-        if (!isGameStarted) {
+        if (!isGameStarted)
+        {
             throw new InvalidOperationException("Game not started");
         }
         if (IsGameOver)
