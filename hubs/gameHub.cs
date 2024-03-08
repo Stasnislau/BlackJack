@@ -197,11 +197,11 @@ public class GameHub : Hub
 
     }
 
-    public async Task Hit(string gameCode, string playerId)
+    public async Task Hit(string gameCode)
     {
         try
         {
-            _gameSessionsManager.Hit(gameCode, playerId);
+            _gameSessionsManager.Hit(gameCode, Context.ConnectionId);
             await BroadcastGameState(gameCode);
             
         }
@@ -211,11 +211,11 @@ public class GameHub : Hub
         }
     }
 
-    public async Task Stand(string gameCode, string playerId)
+    public async Task Stand(string gameCode)
     {
         try
         {
-            _gameSessionsManager.Stand(gameCode, playerId);
+            _gameSessionsManager.Stand(gameCode, Context.ConnectionId);
             await BroadcastGameState(gameCode);
         }
         catch (Exception e)

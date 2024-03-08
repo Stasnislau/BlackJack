@@ -14,6 +14,21 @@ public class GameSessionsManager
         return result;
     }
 
+    private string GetPlayerId(string connectionId)
+    {
+        KeyValuePair<string, string> pair = _playerConnectionMap.FirstOrDefault(c => c.Value == connectionId);
+
+        if (pair.Key != null)
+        {
+            string userId = pair.Key;
+            return userId;
+        }
+        else
+        {
+            return "";
+        }
+    }
+
     public string CreateGameSession()
     {
         var gameCode = Guid.NewGuid().ToString();
@@ -101,32 +116,38 @@ public class GameSessionsManager
         return true;
     }
 
-    private string GetPlayerId(string connectionId)
-    {
-        return _playerConnectionMap.TryGetValue(connectionId, out var playerId) ? playerId : "";
-    }
-
     public bool IsGameSessionAvailable(string gameId)
     {
         return _gameCodeGameMap.ContainsKey(gameId);
     }
 
-    public void Hit(string gameCode, string playerId)
+    public void Hit(string gameCode, string connectionId)
     {
+
         var game = GetGame(gameCode);
+        string playerId = GetPlayerId(connectionId);
         if (game == null)
         {
             throw new ArgumentException("Session not found");
         }
+        if (playerId == "")
+        {
+            throw new ArgumentException("Player not found");
+        }
         game.Hit(playerId);
     }
 
-    public void Stand(string gameCode, string playerId)
+    public void Stand(string gameCode, string connectionId)
     {
         var game = GetGame(gameCode);
+        string playerId = GetPlayerId(connectionId);
         if (game == null)
         {
             throw new ArgumentException("Session not found");
+        }
+        if (playerId == "")
+        {
+            throw new ArgumentException("Player not found");
         }
         game.Stand(playerId);
     }
