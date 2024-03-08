@@ -28,7 +28,7 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            Console.WriteLine("Unable to broadcast. " + e.Message);
+            Console.WriteLine("Unable to broadcast. " + e);
         }
     }
 
@@ -47,7 +47,7 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error creating game session " + e.Message);
+            Console.WriteLine("Error creating game session " + e);
         }
     }
 
@@ -68,7 +68,7 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error joining game " + e.Message);
+            Console.WriteLine("Error joining game " + e);
         }
     }
 
@@ -97,7 +97,7 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error leaving game " + e.Message);
+            Console.WriteLine("Error leaving game " + e);
         }
     }
 
@@ -116,7 +116,7 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error starting game " + e.Message);
+            Console.WriteLine("Error starting game " + e);
         }
     }
 
@@ -133,7 +133,7 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error removing player " + e.Message);
+            Console.WriteLine("Error removing player " + e);
         }
     }
 
@@ -150,7 +150,7 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error validating " + e.Message);
+            Console.WriteLine("Error validating " + e);
         }
     }
 
@@ -192,7 +192,7 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error reconnecting " + e.Message);
+            Console.WriteLine("Error reconnecting " + e);
         }
 
     }
@@ -207,7 +207,7 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error hitting " + e.Message);
+            Console.WriteLine("Error hitting " + e);
         }
     }
 
@@ -220,7 +220,7 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error standing " + e.Message);
+            Console.WriteLine("Error standing " + e);
         }
     }
 }

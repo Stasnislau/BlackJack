@@ -31,11 +31,11 @@ public class Croupier : Player
 
     public void DoAction(Deck deck)
     {
-        if(Score < 17)
-                {
+        if (Score < 17)
+        {
             Draw(deck);
         }
-                else if (Score == 17 && Hand.Count(card => card.Rank == "Ace") == 1)
+        else if (Score == 17 && Hand.Count(card => card.Rank == "Ace") == 1)
         {
             Draw(deck);
         }

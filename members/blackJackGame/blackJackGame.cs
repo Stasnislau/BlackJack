@@ -93,9 +93,9 @@ public class BlackjackGame
             {
                 while (!Players[0].HasFinishedTurn)
                 {
-                    
+                    MakeAIAction();
                 }
-                MakeAIAction();
+                
             }
             return;
         }
@@ -103,7 +103,8 @@ public class BlackjackGame
         if (index == Players.Count - 1)
         {
             CurrentPlayerId = Croupier.Id;
-
+            Croupier.DoAction(Deck);
+            EndGame();
             return;
         }
         CurrentPlayerId = Players[index + 1].Id;
@@ -175,9 +176,9 @@ public class BlackjackGame
                 Croupier.LoseBet(playersBet);
                 continue;
             }
-            if (player.Score == Croupier.Score)
+            if (player.Score <= Croupier.Score)
             {
-                results.Add(player.Id, "Draw");
+                results.Add(player.Id, "Lose");
                 continue;
             }
             results.Add(player.Id, "Lose");

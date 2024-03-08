@@ -95,6 +95,7 @@ const GamePage = () => {
                     if (response.message === "success" && response.playerId !== "") {
                         setIsConnected(true);
                         setIsJoined(true);
+                        setPlayerId(response.playerId!);
                         console.log('Reconnected');
                     } else if (response.message === "failure") {
                         localStorage.removeItem("blackJack");
@@ -106,7 +107,7 @@ const GamePage = () => {
                     console.log('Player Joined:', response.message);
                     setIsJoined(true);
                     localStorage.setItem("blackJack", JSON.stringify({ localGameCode: gameCode, localPlayerId: response.playerId }));
-                    setPlayerId(JSON.stringify(response.playerId))
+                    setPlayerId(response.playerId!);
                     break;
                 case "leave":
                     console.log('Player Left:', response.message);
@@ -148,10 +149,10 @@ const GamePage = () => {
                         <h2 className="text-2xl font-semibold mb-2">Game State</h2>
                         <div className="flex flex-wrap justify-center gap-4 mb-4">
                             {gameState && gameState.players && gameState.players.length > 0 && gameState.players.map((player) => (
-                                <PlayerBox key={player.id} {...player} thisPlayerId={playerId} />
+                                <PlayerBox key={player.id} {...player} isCurrentPlayer={player.id === gameState.currentPlayerId} results={gameState.results} isGameOver={gameState.isGameOver} />
                             ))}
                         </div>
-                        { playerId && isGameStarted &&
+                        {playerId === gameState.currentPlayerId && isGameStarted &&
                             <div className="space-x-2">
                                 <button
                                     onClick={() => connection.invoke('Stand', gameCode).catch((err) => console.error(err))}
