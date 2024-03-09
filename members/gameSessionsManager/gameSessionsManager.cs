@@ -41,11 +41,11 @@ public class GameSessionsManager
         var game = GetGame(gameCode);
         if (game == null)
         {
-            throw new ArgumentException("Session not found");
+            throw new GameException("Session not found");
         }
         if (game.Players.Count < 1)
         {
-            throw new ArgumentException("Not enough players");
+            throw new GameException("Not enough players");
         }
         game.StartGame();
     }
@@ -55,11 +55,11 @@ public class GameSessionsManager
         var game = GetGame(gameCode);
         if (game == null)
         {
-            throw new ArgumentException("Game not found");
+            throw new GameException("Game not found");
         }
         if (_connectionSessionMap.ContainsKey(connectionId))
         {
-            throw new ArgumentException("Player already in a game");
+            throw new GameException("Player already in a game");
         }
         var playerId = game.AddHumanPlayer(name);
         Console.WriteLine("Player added to game: " + playerId);
@@ -128,11 +128,11 @@ public class GameSessionsManager
         string playerId = GetPlayerId(connectionId);
         if (game == null)
         {
-            throw new ArgumentException("Session not found");
+            throw new GameException("Session not found");
         }
         if (playerId == "")
         {
-            throw new ArgumentException("Player not found");
+            throw new GameException("Player not found");
         }
         game.Hit(playerId);
     }
@@ -143,11 +143,11 @@ public class GameSessionsManager
         string playerId = GetPlayerId(connectionId);
         if (game == null)
         {
-            throw new ArgumentException("Session not found");
+            throw new GameException("Session not found");
         }
         if (playerId == "")
         {
-            throw new ArgumentException("Player not found");
+            throw new GameException("Player not found");
         }
         game.Stand(playerId);
     }
@@ -157,7 +157,7 @@ public class GameSessionsManager
         var game = GetGame(gameCode);
         if (game == null)
         {
-            throw new ArgumentException("Session not found");
+            throw new GameException("Session not found");
         }
         var states = game.GetAllGameStates();
         var broadcastDTOs = new List<BroadCastDto>();

@@ -12,23 +12,27 @@ public class GameHub : Hub
 
     private async Task BroadcastGameState(string gameCode)
     {
-        try {
-        var broadCastDTOs = _gameSessionsManager.GetGameStatesForBroadcast(gameCode);
-        Console.WriteLine(broadCastDTOs[0].gameState.Players[0].Hand);
-        foreach (var broadCastDto in broadCastDTOs)
+        try
         {
-            await Clients.Client(broadCastDto.connectionId).SendAsync("GameMessage", new
+            var broadCastDTOs = _gameSessionsManager.GetGameStatesForBroadcast(gameCode);
+            Console.WriteLine(broadCastDTOs[0].gameState.Players[0].Hand);
+            foreach (var broadCastDto in broadCastDTOs)
             {
-                task = "state",
-                broadCastDto.gameCode,
-                broadCastDto.gameState,
-                broadCastDto.playerId
-            });
-        }
+                await Clients.Client(broadCastDto.connectionId).SendAsync("GameMessage", new
+                {
+                    task = "state",
+                    broadCastDto.gameCode,
+                    broadCastDto.gameState,
+                    broadCastDto.playerId
+                });
+            }
         }
         catch (Exception e)
         {
-            Console.WriteLine("Unable to broadcast. " + e);
+            if (e is GameException)
+                Console.WriteLine("Error broadcasting game state " + e.Message);
+            else
+                Console.WriteLine(e);
         }
     }
 
@@ -47,7 +51,10 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error creating game session " + e);
+            if (e is GameException)
+                Console.WriteLine("Error creating game session " + e.Message);
+            else
+                Console.WriteLine(e);
         }
     }
 
@@ -68,7 +75,11 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error joining game " + e);
+            if (e is GameException)
+                Console.WriteLine("Error joining game " + e.Message);
+            else
+                Console.WriteLine(e);
+
         }
     }
 
@@ -97,7 +108,10 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error leaving game " + e);
+            if (e is GameException)
+                Console.WriteLine("Error leaving game " + e.Message);
+            else
+                Console.WriteLine(e);
         }
     }
 
@@ -116,7 +130,10 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error starting game " + e);
+            if (e is GameException)
+                Console.WriteLine("Error starting game " + e.Message);
+            else
+                Console.WriteLine(e);
         }
     }
 
@@ -133,7 +150,7 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error removing player " + e);
+            Console.WriteLine(e);
         }
     }
 
@@ -142,7 +159,8 @@ public class GameHub : Hub
         try
         {
             bool result = _gameSessionsManager.IsGameSessionAvailable(gameCode);
-            await Clients.Caller.SendAsync("GameMessage", new {
+            await Clients.Caller.SendAsync("GameMessage", new
+            {
                 task = "available",
                 gameCode,
                 message = result
@@ -150,7 +168,10 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error validating " + e);
+            if (e is GameException)
+                Console.WriteLine("Error checking game session availability " + e.Message);
+            else
+                Console.WriteLine(e);
         }
     }
 
@@ -192,7 +213,10 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error reconnecting " + e);
+            if (e is GameException)
+                Console.WriteLine("Error reconnecting " + e.Message);
+            else
+                Console.WriteLine(e);
         }
 
     }
@@ -203,7 +227,7 @@ public class GameHub : Hub
         {
             _gameSessionsManager.Hit(gameCode, Context.ConnectionId);
             await BroadcastGameState(gameCode);
-            
+
         }
         catch (Exception e)
         {

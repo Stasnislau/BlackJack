@@ -34,7 +34,7 @@ public class BlackjackGame
     {
         if (Players.Count < 1)
         {
-            throw new ArgumentException("Not enough players");
+            throw new GameException("Not enough players");
         }
         isGameStarted = true;
         Players.ForEach(player => player.SetBet(Bet));
@@ -55,7 +55,7 @@ public class BlackjackGame
     {
         if (isGameStarted)
         {
-            throw new InvalidOperationException("Game already started");
+            throw new GameException("Game already started");
         }
         var player = new HumanPlayer(name);
         Players.Add(player);
@@ -66,7 +66,7 @@ public class BlackjackGame
     {
         if (isGameStarted)
         {
-            throw new InvalidOperationException("Game already started");
+            throw new GameException("Game already started");
         }
         string name = "AI" + new Random().Next(1000, 9999);
         Players.Add(new AIPlayer(name));
@@ -76,7 +76,7 @@ public class BlackjackGame
     {
         if (isGameStarted)
         {
-            throw new InvalidOperationException("Game already started");
+            throw new GameException("Game already started");
         }
         Players.RemoveAll(player => player.Id == id);
         if (Players.Count == 0)
@@ -252,20 +252,20 @@ public class BlackjackGame
     {
         if (!isGameStarted)
         {
-            throw new InvalidOperationException("Game not started");
+            throw new GameException("Game not started");
         }
         if (IsGameOver)
         {
-            throw new InvalidOperationException("Game is over");
+            throw new GameException("Game is over");
         }
         if (playerId != CurrentPlayerId)
         {
-            throw new ArgumentException("Not your turn");
+            throw new GameException("Not your turn");
         }
         Player currentPlayer = Players.Find(player => player.Id == playerId);
         if (currentPlayer == null)
         {
-            throw new ArgumentException("Player not found");
+            throw new GameException("Player not found");
         }
         currentPlayer.Draw(Deck);
         if (currentPlayer.Score >= 21)
@@ -279,20 +279,20 @@ public class BlackjackGame
     {
         if (!isGameStarted)
         {
-            throw new InvalidOperationException("Game not started");
+            throw new GameException("Game not started");
         }
         if (IsGameOver)
         {
-            throw new InvalidOperationException("Game is over");
+            throw new GameException("Game is over");
         }
         if (playerId != CurrentPlayerId)
         {
-            throw new ArgumentException("Not your turn");
+            throw new GameException("Not your turn");
         }
         Player currentPlayer = Players.Find(player => player.Id == playerId);
         if (currentPlayer == null)
         {
-            throw new ArgumentException("Player not found");
+            throw new GameException("Player not found");
         }
         currentPlayer.Stand();
         NextPlayer();

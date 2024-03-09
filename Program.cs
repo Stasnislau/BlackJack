@@ -7,7 +7,6 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
-builder.Services.AddScoped<GameService>();
 // builder.Services.AddScoped<AuthorizationService>();
 builder.Services.AddHttpContextAccessor();
 

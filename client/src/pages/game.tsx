@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from 'react';
 import { connection } from '../connection';
 import { useLocation, useParams } from 'react-router';
 import { GameMessageInterface, GameState } from '../types';
-import PlayerBox from '../components/playerBox/playerBox';
+import GameDesk from '../components/gameDesk/gameDesk';
 import { Context } from '../main';
 
 const GamePage = () => {
@@ -122,7 +122,9 @@ const GamePage = () => {
         });
 
         return () => {
-            connection.off("GameMessage");
+            if (connection.state === "Connected") {
+                connection.off("GameMessage");
+            }
         };
     }, []);
 
@@ -143,34 +145,7 @@ const GamePage = () => {
                 </button>
             }
 
-            {
-                isGameStarted && (
-                    <div className="text-center">
-                        <h2 className="text-2xl font-semibold mb-2">Game State</h2>
-                        <div className="flex flex-wrap justify-center gap-4 mb-4">
-                            {gameState && gameState.players && gameState.players.length > 0 && gameState.players.map((player) => (
-                                <PlayerBox key={player.id} {...player} isCurrentPlayer={player.id === gameState.currentPlayerId} results={gameState.results} isGameOver={gameState.isGameOver} />
-                            ))}
-                        </div>
-                        {playerId === gameState.currentPlayerId && isGameStarted &&
-                            <div className="space-x-2">
-                                <button
-                                    onClick={() => connection.invoke('Stand', gameCode).catch((err) => console.error(err))}
-                                    className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                >
-                                    Stand
-                                </button>
-                                <button
-                                    onClick={() => connection.invoke('Hit', gameCode).catch((err) => console.error(err))}
-                                    className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                >
-                                    Hit
-                                </button>
-                            </div>
-                        }
-                    </div>
-                )
-            }
+            {isJoined && GameDesk({ gameState, playerId })}
         </div >
     );
 }
