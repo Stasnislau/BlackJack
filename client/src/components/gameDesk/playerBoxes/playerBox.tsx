@@ -51,12 +51,23 @@ const PlayerBox = ({
     });
     return (
         <div className={`flex flex-col items-center p-4 rounded shadow-lg m-2 ${isCroupier ? 'absolute top-0 left-1/2 transform -translate-x-1/2' : 'relative'} ${isCurrentPlayer ? 'border-2 border-green-500' : ''}`}>
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center relative">
                 <div className="flex bg-gray-950 rounded-t-xl">
-                    <h2 className="text-xl font-bold px-8">{name || (isCroupier ? 'Croupier' : 'Player')}</h2>
+                    <h2 className="text-xl font-bold px-8">{(isCroupier ? 'Croupier' : name ? name : "Player")}</h2>
                 </div>
-                <div className="flex flex-wrap justify-center gap-2 bg-gray-950 p-2">
+                <div className="flex flex-wrap justify-center gap-2 bg-gray-950 p-4 pb-0 rounded-t-xl">
                     {cardSlots}
+                </div>
+                <div className="flex w-full flex-col gap-2 bg-gray-950 p-2 ">
+                    {isBlackjack ? <p className="text-green-500 text-center">Blackjack!</p> :
+                        score > 21 && <p className="text-red-500 text-center">Busted!</p>}
+                </div>
+                <div className="rounded-full bg-orange-500 absolute p-1 left-[50%] top-[95%] transform -translate-x-1/2">
+                    <p className="text-white font-bold">Score:
+                        <span className={
+                            `text-xl ${score > 21 ? 'text-red-500' : 'text-white'}`
+
+                        }> {score}</span></p>
                 </div>
             </div>
         </div>
