@@ -13,7 +13,6 @@ const Card = ({ isRevealed, rank, suit }: CardDTO) => {
             shadow-lg
             overflow-hidden
         ">
-
             <img
                 className="w-full h-full object-cover"
                 src={cards.find((card) => card.Rank === rank && card.Suit === suit)?.Picture} alt={`${rank} of ${suit}`} />
@@ -35,8 +34,9 @@ const PlayerBox = ({
     isConnected,
     isGameOver,
     results,
+    isGameStarted,
     isCurrentPlayer,
-}: PlayerDTO & { isGameOver: boolean, results: Record<string, string>, isCurrentPlayer: boolean, isConnected?: boolean }) => {
+}: PlayerDTO & { isGameOver: boolean, results: Record<string, string>, isCurrentPlayer: boolean, isGameStarted: boolean, isConnected?: boolean }) => {
     if (!id && !isCroupier) {
         return null;
     }
@@ -62,13 +62,15 @@ const PlayerBox = ({
                     {isBlackjack ? <p className="text-green-500 text-center">Blackjack!</p> :
                         score > 21 && <p className="text-red-500 text-center">Busted!</p>}
                 </div>
-                <div className="rounded-full bg-orange-500 absolute p-1 left-[50%] top-[95%] transform -translate-x-1/2">
-                    <p className="text-white font-bold">Score:
-                        <span className={
-                            `text-xl ${score > 21 ? 'text-red-500' : 'text-white'}`
+                {isGameStarted &&
+                    <div className="rounded-full bg-orange-500 absolute p-1 left-[50%] top-[95%] transform -translate-x-1/2">
+                        <p className="text-white font-bold">Score:
+                            <span className={
+                                `text-xl ${score > 21 ? 'text-red-500' : 'text-white'}`
 
-                        }> {score}</span></p>
-                </div>
+                            }> {score}</span></p>
+                    </div>
+                }
             </div>
         </div>
     );

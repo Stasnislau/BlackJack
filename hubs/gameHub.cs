@@ -72,6 +72,13 @@ public class GameHub : Hub
                 connectionId = Context.ConnectionId,
                 message = $"{Context.ConnectionId} has joined the group {gameCode}."
             });
+            await Clients.Caller.SendAsync("GameMessage", new
+            {
+                task = "state",
+                gameCode,
+                gameState = _gameSessionsManager.GetGameState(gameCode, playerId),
+                playerId,
+            });
         }
         catch (Exception e)
         {

@@ -11,25 +11,25 @@ interface GameDeskProps {
 const GameDesk = ({ gameState, playerId }: GameDeskProps) => {
     const croupier = gameState?.isGameStarted ? gameState?.players[gameState?.players.length - 1] : null;
     const players = gameState?.isGameStarted ? gameState?.players.slice(0, -1) : gameState?.players;
-    const emptySlots = Math.max(0, 3 - (players?.length || 0));
+    const emptySlots = Math.max(0, 4 - (players?.length || 0));
 
     return (
-        <div className="h-screen bg-gradient-to-b from-gray-800 to-green-900 text-white py-8 overflow-y-auto">
-            <div className="container mx-auto px-4">
-                <div className="flex flex-col items-center">
+        <div className="h-screen  w-screen text-white py-8 overflow-y-auto">
+            <div className="mx-auto w-full px-4">
+                <div className="flex flex-col justify-between">
                     {gameState?.isGameStarted && croupier && (
-                        <div className="mb-10">
+                        <div className="mb-10 w-fit absolute top-[5%] left-[50%]">
                             <PlayerBox
                                 key={croupier.id}
                                 {...croupier}
                                 isGameOver={gameState.isGameOver}
                                 isCurrentPlayer={croupier.id === playerId}
                                 results={gameState.results}
+                                isGameStarted={gameState.isGameStarted}
                             />
                         </div>
                     )}
-
-                    <div className="flex justify-center gap-8"> {/* Adjust gap as needed */}
+                    <div className="flex justify-center gap-8">
                         {players?.map((player) => (
                             <PlayerBox
                                 key={player.id}
@@ -37,11 +37,15 @@ const GameDesk = ({ gameState, playerId }: GameDeskProps) => {
                                 isGameOver={gameState.isGameOver}
                                 results={gameState.results}
                                 isCurrentPlayer={player.id === playerId}
+                                isGameStarted={gameState.isGameStarted}
                             />
                         ))}
-                        {Array.from({ length: emptySlots }).map((_, index) => (
-                            <EmptyPlayerBox key={index} />
-                        ))}
+
+                        {!gameState.isGameStarted &&
+                            Array.from({ length: emptySlots }).map((_, index) => (
+                                <EmptyPlayerBox key={index} />
+                            ))
+                        }
                     </div>
                 </div>
             </div>
