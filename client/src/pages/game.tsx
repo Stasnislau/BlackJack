@@ -18,6 +18,14 @@ const GamePage = () => {
     const [isGameStarted, setIsGameStarted] = useState(gameState.isGameStarted || false);
     const [isJoined, setIsJoined] = useState(false);
 
+    const handleHit = () => {
+        connection.invoke('Hit', gameCode).catch((err) => console.error(err));
+    }
+
+    const handleStand = () => {
+        connection.invoke('Stand', gameCode).catch((err) => console.error(err));
+    }
+
     async function startConnection() {
         try {
             console.log('SignalR Connecting in Game Page...', connection.state, gameCode, name);
@@ -145,7 +153,12 @@ const GamePage = () => {
                 </button>
             }
 
-            {isJoined && GameDesk({ gameState, playerId })}
+            {isJoined && GameDesk({
+                gameState,
+                playerId,
+                onHit: handleHit,
+                onStand: handleStand
+            })}
         </div >
     );
 }
