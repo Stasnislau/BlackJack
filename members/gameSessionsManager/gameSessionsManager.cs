@@ -17,7 +17,6 @@ public class GameSessionsManager
     private string GetPlayerId(string connectionId)
     {
         KeyValuePair<string, string> pair = _playerConnectionMap.FirstOrDefault(c => c.Value == connectionId);
-
         if (pair.Key != null)
         {
             string userId = pair.Key;
@@ -94,14 +93,14 @@ public class GameSessionsManager
         _gameCodeGameMap.Remove(gameCode);
     }
 
-    public GameState? GetGameState(string gameCode, string playerId)
+    public GameState? GetGameState(string gameCode)
     {
         var game = GetGame(gameCode);
         if (game == null)
         {
             return null;
         }
-        return game.GetGameState(playerId);
+        return game.GetGameState();
     }
 
     public bool ReconnectPlayer(string connectionId, string playerId, string gameCode)
@@ -111,8 +110,9 @@ public class GameSessionsManager
             return false;
         }
         string oldConnectionId = _playerConnectionMap[playerId];
-        _playerConnectionMap[oldConnectionId] = connectionId;
-        _connectionSessionMap[connectionId] = _gameCodeGameMap.FirstOrDefault(x => x.Value.Players.Any(p => p.Id == playerId)).Key;
+        _playerConnectionMap[playerId] = connectionId;
+        _connectionSessionMap[connectionId] = gameCode;
+        _connectionSessionMap.Remove(oldConnectionId);
         return true;
     }
 

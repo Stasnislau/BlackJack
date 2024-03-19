@@ -186,16 +186,16 @@ public class BlackjackGame
         return results;
     }
 
-    public GameState GetGameState(string playerId)
+    public GameState GetGameState()
     {
         var CroupierHand = Croupier.Hand.Select((card, index) => new CardDTO(CurrentPlayerId == Croupier.Id || Croupier.HasFinishedTurn || index == 0, card)).ToList();
         var playersList = Players.Select(player => new PlayerDTO(
             player.Name,
-            player.Hand.Select(card => new CardDTO(player.HasFinishedTurn || playerId == CurrentPlayerId, card)).ToList(),
+            player.Hand.Select(card => new CardDTO(true, card)).ToList(),
             player.Money,
             player is AIPlayer,
             player is Croupier,
-            player.HasFinishedTurn || CurrentPlayerId == playerId ? player.Score : 0,
+            player.Score,
             player.Id,
             player.Bet,
             player.HasFinishedTurn,
@@ -260,6 +260,7 @@ public class BlackjackGame
         }
         if (playerId != CurrentPlayerId)
         {
+            Console.WriteLine(playerId + " IDSHNIK " + CurrentPlayerId);
             throw new GameException("Not your turn");
         }
         Player currentPlayer = Players.Find(player => player.Id == playerId);
@@ -307,7 +308,7 @@ public class BlackjackGame
             {
                 continue;
             }
-            states.Add(new StateDTO(player.Id, GetGameState(player.Id)));
+            states.Add(new StateDTO(player.Id, GetGameState()));
         }
         return states.ToArray();
     }

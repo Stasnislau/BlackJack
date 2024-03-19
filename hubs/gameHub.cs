@@ -15,7 +15,6 @@ public class GameHub : Hub
         try
         {
             var broadCastDTOs = _gameSessionsManager.GetGameStatesForBroadcast(gameCode);
-            Console.WriteLine(broadCastDTOs[0].gameState.Players[0].Hand);
             foreach (var broadCastDto in broadCastDTOs)
             {
                 await Clients.Client(broadCastDto.connectionId).SendAsync("GameMessage", new
@@ -72,13 +71,7 @@ public class GameHub : Hub
                 connectionId = Context.ConnectionId,
                 message = $"{Context.ConnectionId} has joined the group {gameCode}."
             });
-            await Clients.Caller.SendAsync("GameMessage", new
-            {
-                task = "state",
-                gameCode,
-                gameState = _gameSessionsManager.GetGameState(gameCode, playerId),
-                playerId,
-            });
+            await BroadcastGameState(gameCode);
         }
         catch (Exception e)
         {
@@ -203,8 +196,7 @@ public class GameHub : Hub
                 {
                     task = "state",
                     gameCode,
-                    gameState = _gameSessionsManager.GetGameState(gameCode, playerId)
-
+                    gameState = _gameSessionsManager.GetGameState(gameCode)
                 });
             }
             else

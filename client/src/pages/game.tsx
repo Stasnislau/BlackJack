@@ -99,8 +99,8 @@ const GamePage = () => {
                     console.log('Game State Updated:', response.gameState);
                     break;
                 case "reconnect":
-                    console.log('Reconnected:', response.message);
                     if (response.message === "success" && response.playerId !== "") {
+                        console.log(response)
                         setIsConnected(true);
                         setIsJoined(true);
                         setPlayerId(response.playerId!);
@@ -116,6 +116,7 @@ const GamePage = () => {
                     setIsJoined(true);
                     localStorage.setItem("blackJack", JSON.stringify({ localGameCode: gameCode, localPlayerId: response.playerId }));
                     setPlayerId(response.playerId!);
+                    console.log('Player id:', response.playerId!);
                     break;
                 case "leave":
                     console.log('Player Left:', response.message);
