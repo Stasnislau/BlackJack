@@ -114,6 +114,7 @@ public class BlackjackGame
     public void EndGame()
     {
         IsGameOver = true;
+        ApplyResults(CalculateResults());
     }
 
     public void ResetGame()
@@ -128,16 +129,8 @@ public class BlackjackGame
         }
     }
 
-    public Dictionary<string, string> DetermineResults()
+    public Dictionary<string, string> CalculateResults()
     {
-        if (!IsGameOver)
-        {
-            return new Dictionary<string, string>();
-        }
-        if (!isGameStarted)
-        {
-            return new Dictionary<string, string>();
-        }
         Dictionary<string, string> results = new Dictionary<string, string>();
         foreach (Player player in Players)
         {
@@ -145,36 +138,26 @@ public class BlackjackGame
             if (player.Score > 21)
             {
                 results.Add(player.Id, "Bust");
-                Croupier.WinBet(playersBet);
-                player.LoseBet(playersBet);
                 continue;
             }
             if (Croupier.Score > 21)
             {
                 results.Add(player.Id, "Win");
-                player.WinBet(playersBet);
-                Croupier.LoseBet(playersBet);
                 continue;
             }
             if (player.Score == 21 && player.Hand.Count == 2 && Croupier.Score != 21 && Croupier.Hand.Count != 2)
             {
                 results.Add(player.Id, "Blackjack");
-                player.WinBet(playersBet * 2);
-                Croupier.LoseBet(playersBet * 2);
                 continue;
             }
             if (Croupier.Score == 21 && Croupier.Hand.Count == 2 && player.Score != 21 && player.Hand.Count != 2)
             {
                 results.Add(player.Id, "Lose");
-                Croupier.WinBet(playersBet);
-                player.LoseBet(playersBet);
                 continue;
             }
             if (player.Score > Croupier.Score)
             {
                 results.Add(player.Id, "Win");
-                player.WinBet(playersBet);
-                Croupier.LoseBet(playersBet);
                 continue;
             }
             if (player.Score <= Croupier.Score)
@@ -185,6 +168,34 @@ public class BlackjackGame
             results.Add(player.Id, "Lose");
         }
         return results;
+    }
+
+    public void ApplyResults(Dictionary<string, string> results)
+    {
+        foreach (Player player in Players)
+        {
+            int playersBet = player.Bet;
+            string result = results[player.Id];
+            switch (result)
+            {
+                case "Bust":
+                    Croupier.WinBet(playersBet);
+                    player.LoseBet(playersBet);
+                    break;
+                case "Win":
+                    player.WinBet(playersBet);
+                    Croupier.LoseBet(playersBet);
+                    break;
+                case "Blackjack":
+                    player.WinBet(playersBet * 2);
+                    Croupier.LoseBet(playersBet * 2);
+                    break;
+                case "Lose":
+                    Croupier.WinBet(playersBet);
+                    player.LoseBet(playersBet);
+                    break;
+            }
+        }
     }
 
     public GameState GetGameState()
@@ -220,7 +231,7 @@ public class BlackjackGame
             IsGamePaused,
             isGameStarted,
             playersList,
-            DetermineResults()
+            CalculateResults()
         );
     }
 

@@ -72,15 +72,16 @@ const PlayerBox = ({
                     </div>
                 }
             </div>
-            {isAI && !isGameStarted  &&
+            {isAI && !isGameStarted &&
                 <button
                     onClick={() => onRemoveAiPlayer(id)}
                     className="bg-red-500 text-white px-4 py-2 rounded mt-2 hover:bg-red-700"
                 >
                     Remove AI Player
-                </button> 
-        
+                </button>
+
             }
+            {results && results[id] && <p className="text-white text-center">{results[id]}</p>}
         </div>
     );
 };

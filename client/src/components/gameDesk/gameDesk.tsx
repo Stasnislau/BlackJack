@@ -20,13 +20,13 @@ const GameDesk = ({ gameState, playerId, onHit, onStand, onAddPlayer, onRemoveAi
             players?.length + index
             : index;
         if (numberOfTheBox === 0) {
-            return "absolute bottom-[15%] left-[50%] translate-x-[-50%]";
+            return "absolute bottom-[10%] left-[50%] translate-x-[-50%]";
         }
         if (numberOfTheBox === 1) {
-            return "absolute bottom-[20%] left-[5%] translate-y-[-50%]";
+            return "absolute bottom-[15%] left-[5%] translate-y-[-50%]";
         }
         if (numberOfTheBox === 2) {
-            return "absolute bottom-[20%] right-[5%] translate-y-[-50%]";
+            return "absolute bottom-[15%] right-[5%] translate-y-[-50%]";
         }
 
         return "";
@@ -40,7 +40,7 @@ const GameDesk = ({ gameState, playerId, onHit, onStand, onAddPlayer, onRemoveAi
                         key={croupier.id}
                         {...croupier}
                         isGameOver={gameState.isGameOver}
-                        isCurrentPlayer={croupier.id === playerId}
+                        isCurrentPlayer={croupier.id === gameState.currentPlayerId}
                         results={gameState.results}
                         isGameStarted={gameState.isGameStarted}
                         onRemoveAiPlayer={onRemoveAiPlayer}
@@ -54,7 +54,7 @@ const GameDesk = ({ gameState, playerId, onHit, onStand, onAddPlayer, onRemoveAi
                             {...player}
                             isGameOver={gameState.isGameOver}
                             results={gameState.results}
-                            isCurrentPlayer={player.id === playerId}
+                            isCurrentPlayer={player.id === gameState.currentPlayerId}
                             isGameStarted={gameState.isGameStarted}
                             onRemoveAiPlayer={onRemoveAiPlayer}
                         />
@@ -69,7 +69,7 @@ const GameDesk = ({ gameState, playerId, onHit, onStand, onAddPlayer, onRemoveAi
                     ))
                 }
                 {gameState.isGameStarted && playerId === gameState?.currentPlayerId && (
-                    <div className="absolute bottom-[5%] left-[50%] translate-x-[-50%]">
+                    <div className="absolute bottom-[2%] left-[50%] translate-x-[-50%]">
                         <div className="flex gap-4">
                             <button
                                 onClick={onHit}
