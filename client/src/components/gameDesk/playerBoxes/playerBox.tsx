@@ -31,12 +31,12 @@ const PlayerBox = ({
     bet,
     hasFinishedTurn,
     isBlackjack,
-    isConnected,
     isGameOver,
     results,
     isGameStarted,
     isCurrentPlayer,
-}: PlayerDTO & { isGameOver: boolean, results: Record<string, string>, isCurrentPlayer: boolean, isGameStarted: boolean, isConnected?: boolean }) => {
+    onRemoveAiPlayer
+}: PlayerDTO & { isGameOver: boolean, results: Record<string, string>, isCurrentPlayer: boolean, isGameStarted: boolean, onRemoveAiPlayer: (id: string) => void }) => {
     if (!id && !isCroupier) {
         return null;
     }
@@ -72,6 +72,15 @@ const PlayerBox = ({
                     </div>
                 }
             </div>
+            {isAI && !isGameStarted  &&
+                <button
+                    onClick={() => onRemoveAiPlayer(id)}
+                    className="bg-red-500 text-white px-4 py-2 rounded mt-2 hover:bg-red-700"
+                >
+                    Remove AI Player
+                </button> 
+        
+            }
         </div>
     );
 };

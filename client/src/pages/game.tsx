@@ -26,6 +26,14 @@ const GamePage = () => {
         connection.invoke('Stand', gameCode).catch((err) => console.error(err));
     }
 
+    const handleAddAiPlayer = () => {
+        connection.invoke('AddAiPlayer', gameCode).catch((err) => console.error(err));
+    }
+
+    const handleRemoveAiPlayer = (playerId: string) => {
+        connection.invoke('RemoveAiPlayer', gameCode, playerId).catch((err) => console.error(err));
+    }
+
     async function startConnection() {
         try {
             console.log('SignalR Connecting in Game Page...', connection.state, gameCode, name);
@@ -153,12 +161,20 @@ const GamePage = () => {
                     Start Game
                 </button>
             }
+            {gameState.isGameOver && <button
+                onClick={() => connection.invoke('RestartGame', gameCode).catch((err) => console.error(err))}
+                className="bg-blue-500 hover:bg-blue-700 z-10 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-3"
+            >
+                Restart Game
+            </button>}
 
             {isJoined && GameDesk({
                 gameState,
                 playerId,
                 onHit: handleHit,
-                onStand: handleStand
+                onStand: handleStand,
+                onAddPlayer: handleAddAiPlayer,
+                onRemoveAiPlayer: handleRemoveAiPlayer,
             })}
         </div >
     );

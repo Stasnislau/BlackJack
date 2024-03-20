@@ -7,9 +7,11 @@ interface GameDeskProps {
     playerId: string;
     onHit: () => void;
     onStand: () => void;
+    onAddPlayer: () => void;
+    onRemoveAiPlayer: (id: string) => void;
 }
 
-const GameDesk = ({ gameState, playerId, onHit, onStand }: GameDeskProps) => {
+const GameDesk = ({ gameState, playerId, onHit, onStand, onAddPlayer, onRemoveAiPlayer }: GameDeskProps) => {
     const croupier = gameState?.isGameStarted ? gameState?.players[gameState?.players.length - 1] : null;
     const players = gameState?.players && gameState.players.length > 1 ? gameState?.players.slice(0, -1) : []
     const emptySlots = Math.max(0, 3 - (players?.length || 0));
@@ -41,6 +43,7 @@ const GameDesk = ({ gameState, playerId, onHit, onStand }: GameDeskProps) => {
                         isCurrentPlayer={croupier.id === playerId}
                         results={gameState.results}
                         isGameStarted={gameState.isGameStarted}
+                        onRemoveAiPlayer={onRemoveAiPlayer}
                     />
                 </div>
             )}
@@ -53,6 +56,7 @@ const GameDesk = ({ gameState, playerId, onHit, onStand }: GameDeskProps) => {
                             results={gameState.results}
                             isCurrentPlayer={player.id === playerId}
                             isGameStarted={gameState.isGameStarted}
+                            onRemoveAiPlayer={onRemoveAiPlayer}
                         />
                     </div>
                 ))}
@@ -60,7 +64,7 @@ const GameDesk = ({ gameState, playerId, onHit, onStand }: GameDeskProps) => {
                 {!gameState.isGameStarted &&
                     Array.from({ length: emptySlots }).map((_, index) => (
                         <div className={getPlayerPosition(index, true)} key={index}>
-                            <EmptyPlayerBox />
+                            <EmptyPlayerBox onAddPlayer={onAddPlayer} />
                         </div>
                     ))
                 }

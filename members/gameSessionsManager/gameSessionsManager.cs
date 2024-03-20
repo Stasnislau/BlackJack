@@ -70,7 +70,7 @@ public class GameSessionsManager
     {
         _gameCodeGameMap[gameCode]?.AddAIPlayer();
     }
-    public void RemoveHumanPlayerFromSession(string gameCode, string connectionId, string? playerId)
+    public void RemoveHumanPlayerFromGame(string gameCode, string connectionId, string? playerId)
     {
         playerId ??= GetPlayerId(connectionId);
 
@@ -78,7 +78,17 @@ public class GameSessionsManager
         _connectionSessionMap.Remove(connectionId);
         _playerConnectionMap.Remove(playerId);
     }
-    public void RemovePlayerFromSession(string sessionId, string playerId)
+
+    public void RemoveAIPlayerFromGame(string gameCode, string playerId)
+    {
+        if (_gameCodeGameMap[gameCode] == null)
+        {
+            throw new GameException("Game not found");
+        }
+         
+        _gameCodeGameMap[gameCode].RemovePlayer(playerId);
+    }
+    public void RemovePlayerFromGame(string gameCode, string playerId)
     {
         if (_playerConnectionMap.TryGetValue(playerId, out var connectionId))
         {
@@ -139,6 +149,7 @@ public class GameSessionsManager
 
     public void Stand(string gameCode, string connectionId)
     {
+        Console.WriteLine("Stand called");
         var game = GetGame(gameCode);
         string playerId = GetPlayerId(connectionId);
         if (game == null)
@@ -169,6 +180,15 @@ public class GameSessionsManager
             }
         }
         return broadcastDTOs.ToArray();
+    }
 
+    public void RestartGame(string gameCode)
+    {
+        var game = GetGame(gameCode);
+        if (game == null)
+        {
+            throw new GameException("Session not found");
+        }
+        game.RestartGame();
     }
 }

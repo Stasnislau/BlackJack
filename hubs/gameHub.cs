@@ -88,7 +88,7 @@ public class GameHub : Hub
         try
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, gameCode);
-            _gameSessionsManager.RemovePlayerFromSession(Context.ConnectionId, playerId);
+            _gameSessionsManager.RemovePlayerFromGame(Context.ConnectionId, playerId);
             await Clients.Group(gameCode).SendAsync("GameMessage", new
             {
                 task = "leave",
@@ -141,7 +141,7 @@ public class GameHub : Hub
     {
         try
         {
-            _gameSessionsManager.RemovePlayerFromSession(Context.ConnectionId, playerId: "");
+            _gameSessionsManager.RemovePlayerFromGame(Context.ConnectionId, playerId: "");
             if (exception != null)
             {
                 Console.WriteLine(exception.Message);
@@ -153,7 +153,6 @@ public class GameHub : Hub
             Console.WriteLine(e);
         }
     }
-
     public async Task IsGameSessionAvailable(string gameCode)
     {
         try
@@ -220,6 +219,38 @@ public class GameHub : Hub
 
     }
 
+    public async Task AddAIPlayer(string gameCode)
+    {
+        try
+        {
+            _gameSessionsManager.AddAIPlayerToSession(gameCode);
+            await BroadcastGameState(gameCode);
+        }
+        catch (Exception e)
+        {
+            if (e is GameException)
+                Console.WriteLine("Error adding AI player " + e.Message);
+            else
+                Console.WriteLine(e);
+        }
+    }
+
+    public async Task RemoveAIPlayer(string gameCode, string playerId)
+    {
+        try
+        {
+            _gameSessionsManager.RemoveAIPlayerFromGame(gameCode, playerId);
+            await BroadcastGameState(gameCode);
+        }
+        catch (Exception e)
+        {
+            if (e is GameException)
+                Console.WriteLine("Error removing AI player " + e.Message);
+            else
+                Console.WriteLine(e);
+        }
+    }
+
     public async Task Hit(string gameCode)
     {
         try
@@ -246,4 +277,19 @@ public class GameHub : Hub
             Console.WriteLine("Error standing " + e);
         }
     }
+
+    public async Task RestartGame(string gameCode)
+    {
+        try
+        {
+            _gameSessionsManager.RestartGame(gameCode);
+            await BroadcastGameState(gameCode);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error restarting game " + e);
+        }
+    }
+
+
 }

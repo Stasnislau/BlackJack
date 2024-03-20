@@ -51,6 +51,12 @@ public class BlackjackGame
         NextPlayer();
     }
 
+    public void RestartGame()
+    {
+        ResetGame();
+        StartGame();
+    }
+
     public string AddHumanPlayer(string name)
     {
         if (isGameStarted)
@@ -89,25 +95,20 @@ public class BlackjackGame
         if (CurrentPlayerId == "")
         {
             CurrentPlayerId = Players[0].Id;
-            if (Players[0] is AIPlayer)
-            {
-                while (!Players[0].HasFinishedTurn)
-                {
-                    MakeAIAction();
-                }
-                
-            }
-            return;
         }
-        int index = Players.FindIndex(player => player.Id == CurrentPlayerId);
-        if (index == Players.Count - 1)
+        else
         {
-            CurrentPlayerId = Croupier.Id;
-            Croupier.DoAction(Deck);
-            EndGame();
-            return;
+            int currentPlayerIndex = Players.FindIndex(player => player.Id == CurrentPlayerId);
+            if (currentPlayerIndex == Players.Count - 1)
+            {
+                CurrentPlayerId = Croupier.Id;
+            }
+            else
+            {
+                CurrentPlayerId = Players[currentPlayerIndex + 1].Id;
+            }
         }
-        CurrentPlayerId = Players[index + 1].Id;
+        MakeTurn();
     }
 
     public void EndGame()
@@ -223,31 +224,6 @@ public class BlackjackGame
         );
     }
 
-    public void MakeAIAction()
-    {
-        if (CurrentPlayerId == Croupier.Id)
-        {
-            while (!Croupier.HasFinishedTurn)
-            {
-                Croupier.DoAction(Deck);
-            }
-            EndGame();
-        }
-        AIPlayer currentPlayer = (AIPlayer)Players.Find(player => player.Id == CurrentPlayerId);
-        if (currentPlayer == null)
-        {
-            return;
-        }
-        while (!currentPlayer.HasFinishedTurn)
-        {
-            currentPlayer.DoAction(Deck);
-        }
-        if (currentPlayer.HasFinishedTurn)
-        {
-            NextPlayer();
-        }
-    }
-
     public void Hit(string playerId)
     {
         if (!isGameStarted)
@@ -260,7 +236,6 @@ public class BlackjackGame
         }
         if (playerId != CurrentPlayerId)
         {
-            Console.WriteLine(playerId + " IDSHNIK " + CurrentPlayerId);
             throw new GameException("Not your turn");
         }
         Player currentPlayer = Players.Find(player => player.Id == playerId);
@@ -311,5 +286,27 @@ public class BlackjackGame
             states.Add(new StateDTO(player.Id, GetGameState()));
         }
         return states.ToArray();
+    }
+
+    public void MakeTurn()
+    {
+        if (CurrentPlayerId == Croupier.Id)
+        {
+            while (Croupier.HasFinishedTurn)
+            {
+                Croupier.DoAction(Deck);
+                return;
+            }
+            EndGame();
+        }
+        Player currentPlayer = Players.Find(player => player.Id == CurrentPlayerId);
+        if (currentPlayer is AIPlayer aiPlayer)
+        {
+            while (!aiPlayer.HasFinishedTurn)
+            {
+                aiPlayer.DoAction(Deck);
+            }
+            NextPlayer();
+        }
     }
 }
