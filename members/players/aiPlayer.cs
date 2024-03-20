@@ -4,14 +4,6 @@ public class AIPlayer : Player
     {
     }
 
-    public void ShowHand()
-    {
-        foreach (Card card in Hand)
-        {
-            Console.WriteLine($"{card.Rank} of {card.Suit}");
-        }
-    }
-
     public void DoAction(Deck deck)
     {
         if (Score < 17)

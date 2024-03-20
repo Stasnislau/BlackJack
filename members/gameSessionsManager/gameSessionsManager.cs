@@ -149,7 +149,6 @@ public class GameSessionsManager
 
     public void Stand(string gameCode, string connectionId)
     {
-        Console.WriteLine("Stand called");
         var game = GetGame(gameCode);
         string playerId = GetPlayerId(connectionId);
         if (game == null)

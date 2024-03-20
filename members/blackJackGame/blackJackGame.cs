@@ -46,8 +46,8 @@ public class BlackjackGame
             player.Draw(Deck);
             player.Draw(Deck);
         }
-        Croupier.Draw(Deck, true);
-        Croupier.Draw(Deck, true);
+        Croupier.Draw(Deck);
+        Croupier.Draw(Deck);
         NextPlayer();
     }
 
@@ -292,12 +292,12 @@ public class BlackjackGame
     {
         if (CurrentPlayerId == Croupier.Id)
         {
-            while (Croupier.HasFinishedTurn)
+            while (!Croupier.HasFinishedTurn)
             {
                 Croupier.DoAction(Deck);
-                return;
             }
             EndGame();
+            return;
         }
         Player currentPlayer = Players.Find(player => player.Id == CurrentPlayerId);
         if (currentPlayer is AIPlayer aiPlayer)

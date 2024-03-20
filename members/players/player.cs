@@ -55,6 +55,8 @@ public abstract class Player
     public void ResetHand()
     {
         Hand.Clear();
+        HasFinishedTurn = false;
+        isBlackjack = false;
         Score = 0;
     }
     public void WinBet(int Bet)
