@@ -133,12 +133,15 @@ public class BlackjackGame
     public Dictionary<string, string> CalculateResults()
     {
         Dictionary<string, string> results = new Dictionary<string, string>();
+        if (!IsGameOver)
+        {
+            return results;
+        }
         foreach (Player player in Players)
         {
-            int playersBet = player.Bet;
             if (player.Score > 21)
             {
-                results.Add(player.Id, "Bust");
+                results.Add(player.Id, "Lose");
                 continue;
             }
             if (Croupier.Score > 21)
@@ -166,7 +169,6 @@ public class BlackjackGame
                 results.Add(player.Id, "Lose");
                 continue;
             }
-            results.Add(player.Id, "Lose");
         }
         return results;
     }

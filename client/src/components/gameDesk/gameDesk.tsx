@@ -61,7 +61,7 @@ const GameDesk = ({ gameState, playerId, onHit, onStand, onAddPlayer, onRemoveAi
                     </div>
                 ))}
 
-                {!gameState.isGameStarted && gameState.isGameOver &&
+                {(!gameState.isGameStarted || gameState.isGameOver) &&
                     Array.from({ length: emptySlots }).map((_, index) => (
                         <div className={getPlayerPosition(index, true)} key={index}>
                             <EmptyPlayerBox onAddPlayer={onAddPlayer} />
