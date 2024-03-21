@@ -49,7 +49,6 @@ const PlayerBox = ({
             <div key={index} className="w-16 h-24 bg-gray-500"></div>
         );
     });
-    console.log('results', results[id])
     return (
         <div className={`flex flex-col items-center bg-gray-600 bg-opacity-85 shadow-xl p-4 rounded m-2 ${isCroupier ? 'absolute top-0 left-1/2 transform -translate-x-1/2' : 'relative'} ${isCurrentPlayer && !isGameOver ? 'border-2 border-green-500' : ''}`}>
             <div className="flex flex-col items-center relative">
@@ -67,16 +66,18 @@ const PlayerBox = ({
                                 results[id] === 'Draw' ? 'text-yellow-500' :
                                     'text-white'
                             }`}
-
                         >
                             {results[id]}
                         </p>) :
                         (isBlackjack ? <p className="text-green-500 text-center">Blackjack!</p> :
                             score > 21 && <p className="text-red-500 text-center">Busted!</p>)
-
+                    }
+                    {
+                        ((isGameOver || !isGameStarted) && (money !== null && money < bet)) &&
+                        <p className="text-red-500 text-center">Out of money!</p>
                     }
                 </div>
-                {(isGameStarted || isGameOver) && score !== 0 &&
+                {(isGameStarted || isGameOver) && (score !== 0) &&
                     <div className="rounded-full bg-orange-500 absolute p-1 left-[50%] top-[95%] transform -translate-x-1/2">
                         <p className="text-white font-bold">Score:
                             <span className={
