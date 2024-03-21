@@ -1,21 +1,35 @@
-import React from 'react';
 
 interface EmptyPlayerBoxProps {
     onAddPlayer: () => void;
 }
 
+const cardSlots = Array.from({ length: 5 }).map((_, index) => {
+
+    return (
+        <div key={index} className="w-16 h-24 bg-gray-500"></div>
+    );
+});
+
 const EmptyPlayerBox = ({ onAddPlayer }: EmptyPlayerBoxProps) => {
     return (
-        <div className="flex flex-col items-center p-4 w-60 h-60 bg-gray-900 rounded-lg shadow-2xl m-4">
-            <div className="text-white text-xl font-semibold mb-2">Empty slot</div>
-            <div className="w-16 h-16 rounded-full bg-red-500 flex items-center justify-center mb-2 animate-pulse border-4 border-white">
-                <div className="text-white text-xl font-semibold">AI</div>
+        <div className={`flex flex-col items-center bg-gray-600 bg-opacity-85 shadow-xl p-4 rounded m-2 }`}>
+            <div className="flex flex-col items-center relative">
+                <div className="flex bg-gray-950 rounded-t-xl relative">
+                    <h2 className="text-xl font-bold px-8">Empty slot</h2>
+                </div>
+                <div className="flex flex-wrap justify-center gap-2 bg-gray-950 p-4 pb-0 rounded-t-xl">
+                    {cardSlots}
+                </div>
             </div>
-            <button onClick={onAddPlayer} className="bg-green-500 text-white px-4 py-2 rounded mt-2 hover:bg-green-700 transition duration-200 transform hover:scale-105">
-                Add AI Player
-            </button>
+            <div className="flex w-full flex-col bg-gray-950 p-2 relative ">
+
+                <button onClick={onAddPlayer} className="bg-green-500 text-white px-4 py-2 rounded-full absolute left-[50%] top-[95%] transform -translate-x-1/2 hover:bg-green-700 transition duration-200 hover:scale-105">
+                    Add AI Player
+                </button>
+            </div>
         </div>
     );
 };
 
 export default EmptyPlayerBox;
+

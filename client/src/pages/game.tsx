@@ -147,21 +147,20 @@ const GamePage = () => {
 
     return (
         <div className='flex flex-col items-center justify-center h-screen text-white'>
-            <div className="flex flex-col p-4 absolute right-[1%] top-[5%] bg-gray-800 bg-opacity-75 shadow-lg">
+            <div className="flex flex-col p-4 absolute right-[1%] top-[5%] bg-gray-800 bg-opacity-60 shadow-lg">
+                {name && <p className="text-lg mb-2">Name: <span className="text-yellow-300">{name}</span></p>}
                 {isConnected ? <p className="text-green-400">Connected</p> : <p className="text-red-400">Disconnected</p>}
                 {isJoined ? <p className="text-green-500">Joined</p> : <p className="text-red-500">Not Joined</p>}
                 {gameState.players && gameState.players.length > 0 && gameState.players.find((player) => player.id === playerId) && <p>Money: {gameState.players.find((player) => player.id === playerId)?.money}</p>}
                 {gameState.players && gameState.players.length > 0 && gameState.players.find((player) => player.id === playerId) && <p>Bet: {gameState.players.find((player) => player.id === playerId)?.bet}</p>}
                 {gameCode && <p className="text-lg mb-2">Game Code: <p className="text-yellow-300">{gameCode}</p></p>}
-                {!isGameStarted || gameState.isGameOver && <p className="italic mb-3">Waiting for players...</p>}
-
-
+                {!isGameStarted || gameState.isGameOver && <p className="italic mb-3">Waiting to start...</p>}
             </div>
 
-            {!isGameStarted &&
+            {!isGameStarted && !gameState.isGameOver &&
                 <button
                     onClick={() => connection.invoke('StartGame', gameCode).catch((err) => console.error(err))}
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-3"
+                    className="bg-blue-500 hover:bg-blue-700 z-10 text-white font-bold py-2 px-4 rounded absolute focus:outline-none focus:shadow-outline left-[50%] top-[45%] transform -translate-x-1/2"
                 >
                     Start Game
                 </button>

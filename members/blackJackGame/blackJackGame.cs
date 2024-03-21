@@ -114,6 +114,7 @@ public class BlackjackGame
     public void EndGame()
     {
         IsGameOver = true;
+        isGameStarted = false;
         ApplyResults(CalculateResults());
     }
 

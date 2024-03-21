@@ -12,7 +12,7 @@ interface GameDeskProps {
 }
 
 const GameDesk = ({ gameState, playerId, onHit, onStand, onAddPlayer, onRemoveAiPlayer }: GameDeskProps) => {
-    const croupier = gameState?.isGameStarted ? gameState?.players[gameState?.players.length - 1] : null;
+    const croupier = gameState?.isGameStarted || gameState.isGameOver ? gameState?.players[gameState?.players.length - 1] : null;
     const players = gameState?.players && gameState.players.length > 1 ? gameState?.players.slice(0, -1) : []
     const emptySlots = Math.max(0, 3 - (players?.length || 0));
     const getPlayerPosition = (index: number, isEmpty = false) => {
@@ -23,10 +23,10 @@ const GameDesk = ({ gameState, playerId, onHit, onStand, onAddPlayer, onRemoveAi
             return "absolute bottom-[10%] left-[50%] translate-x-[-50%]";
         }
         if (numberOfTheBox === 1) {
-            return "absolute bottom-[15%] left-[5%] translate-y-[-50%]";
+            return "absolute bottom-[10%] left-[5%] translate-y-[-40%]";
         }
         if (numberOfTheBox === 2) {
-            return "absolute bottom-[15%] right-[5%] translate-y-[-50%]";
+            return "absolute bottom-[10%] right-[5%] translate-y-[-40%]";
         }
 
         return "";
@@ -34,7 +34,7 @@ const GameDesk = ({ gameState, playerId, onHit, onStand, onAddPlayer, onRemoveAi
 
     return (
         <div className="h-screen w-screen text-white overflow-y-auto">
-            {gameState?.isGameStarted && croupier && (
+            {(gameState?.isGameStarted || gameState.isGameOver) && croupier && (
                 <div className="absolute top-[5%] left-[50%] translate-x-[-50%] w-full">
                     <PlayerBox
                         key={croupier.id}
@@ -61,7 +61,7 @@ const GameDesk = ({ gameState, playerId, onHit, onStand, onAddPlayer, onRemoveAi
                     </div>
                 ))}
 
-                {!gameState.isGameStarted &&
+                {!gameState.isGameStarted && gameState.isGameOver &&
                     Array.from({ length: emptySlots }).map((_, index) => (
                         <div className={getPlayerPosition(index, true)} key={index}>
                             <EmptyPlayerBox onAddPlayer={onAddPlayer} />

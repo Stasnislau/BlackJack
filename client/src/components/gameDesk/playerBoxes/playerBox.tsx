@@ -50,9 +50,10 @@ const PlayerBox = ({
         );
     });
     return (
-        <div className={`flex flex-col items-center p-4 rounded shadow-lg m-2 ${isCroupier ? 'absolute top-0 left-1/2 transform -translate-x-1/2' : 'relative'} ${isCurrentPlayer ? 'border-2 border-green-500' : ''}`}>
+        <div className={`flex flex-col items-center bg-gray-600 bg-opacity-85 shadow-xl p-4 rounded m-2 ${isCroupier ? 'absolute top-0 left-1/2 transform -translate-x-1/2' : 'relative'} ${isCurrentPlayer && !isGameOver ? 'border-2 border-green-500' : ''}`}>
             <div className="flex flex-col items-center relative">
-                <div className="flex bg-gray-950 rounded-t-xl">
+                {results[id] && <p className="text-green-500 text-lg absolute left-[50%] top-[0%] transform -translate-x-1/2">{results[id]}</p>}
+                <div className="flex bg-gray-950 rounded-t-xl relative">
                     <h2 className="text-xl font-bold px-8">{(isCroupier ? 'Croupier' : name ? name : "Player")}</h2>
                 </div>
                 <div className="flex flex-wrap justify-center gap-2 bg-gray-950 p-4 pb-0 rounded-t-xl">
@@ -62,11 +63,11 @@ const PlayerBox = ({
                     {isBlackjack ? <p className="text-green-500 text-center">Blackjack!</p> :
                         score > 21 && <p className="text-red-500 text-center">Busted!</p>}
                 </div>
-                {isGameStarted &&
+                {(isGameStarted || isGameOver) && score !== 0 &&
                     <div className="rounded-full bg-orange-500 absolute p-1 left-[50%] top-[95%] transform -translate-x-1/2">
                         <p className="text-white font-bold">Score:
                             <span className={
-                                `text-xl ${score > 21 ? 'text-red-500' : 'text-white'}`
+                                `text-xl ${score > 21 ? 'text-[#FF0000]' : 'text-white'}`
 
                             }> {score}</span></p>
                     </div>
@@ -75,13 +76,11 @@ const PlayerBox = ({
             {isAI && !isGameStarted &&
                 <button
                     onClick={() => onRemoveAiPlayer(id)}
-                    className="bg-red-500 text-white px-4 py-2 rounded mt-2 hover:bg-red-700"
+                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center mt-2 mr-2 hover:bg-red-700"
                 >
-                    Remove AI Player
+                    X
                 </button>
-
             }
-            {results && results[id] && <p className="text-white text-center">{results[id]}</p>}
         </div>
     );
 };
