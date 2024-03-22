@@ -32,6 +32,8 @@ const GameDesk = ({ gameState, playerId, onHit, onStand, onAddPlayer, onRemoveAi
         return "";
     };
 
+    console.log(playerId, gameState?.currentPlayerId, "CHECK" )
+
     return (
         <div className="h-screen w-screen text-white overflow-y-auto">
             {(gameState?.isGameStarted || gameState.isGameOver) && croupier && (

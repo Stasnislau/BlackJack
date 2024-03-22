@@ -63,7 +63,7 @@ public class GameHub : Hub
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, gameCode);
             string playerId = _gameSessionsManager.AddHumanPlayerToSession(gameCode, name, Context.ConnectionId);
-            await Clients.Group(gameCode).SendAsync("GameMessage", new
+            await Clients.Caller.SendAsync("GameMessage", new
             {
                 task = "join",
                 gameCode,
@@ -89,15 +89,6 @@ public class GameHub : Hub
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, gameCode);
             _gameSessionsManager.RemovePlayerFromGame(Context.ConnectionId, playerId);
-            await Clients.Group(gameCode).SendAsync("GameMessage", new
-            {
-                task = "leave",
-                gameCode,
-                playerId,
-                connectionId = Context.ConnectionId,
-                message = $"{Context.ConnectionId} has left the group {gameCode}."
-            });
-
             await Clients.Caller.SendAsync("GameMessage", new
             {
                 task = "leave",
@@ -105,6 +96,7 @@ public class GameHub : Hub
                 connectionId = Context.ConnectionId,
                 message = $"You have left the group {gameCode}."
             });
+            await BroadcastGameState(gameCode);
         }
         catch (Exception e)
         {
@@ -183,7 +175,7 @@ public class GameHub : Hub
             {
                 Console.WriteLine("Successfully reconnected " + playerId);
                 await Groups.AddToGroupAsync(Context.ConnectionId, gameCode);
-                await Clients.Group(gameCode).SendAsync("GameMessage", new
+                await Clients.Caller.SendAsync("GameMessage", new
                 {
                     task = "reconnect",
                     gameCode,

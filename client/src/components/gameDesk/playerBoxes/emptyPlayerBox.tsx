@@ -15,7 +15,7 @@ const EmptyPlayerBox = ({ onAddPlayer }: EmptyPlayerBoxProps) => {
         <div className={`flex flex-col items-center bg-gray-600 bg-opacity-85 shadow-xl p-4 rounded m-2 }`}>
             <div className="flex flex-col items-center relative">
                 <div className="flex bg-gray-950 rounded-t-xl relative">
-                    <h2 className="text-xl font-bold px-8">Empty slot</h2>
+                    <h2 className="text-xl font-bold animate-pulse px-8">Empty slot</h2>
                 </div>
                 <div className="flex flex-wrap justify-center gap-2 bg-gray-950 p-4 pb-0 rounded-t-xl">
                     {cardSlots}

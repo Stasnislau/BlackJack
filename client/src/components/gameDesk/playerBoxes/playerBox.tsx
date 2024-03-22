@@ -59,7 +59,7 @@ const PlayerBox = ({
                 <div className="flex flex-wrap justify-center gap-2 bg-gray-950 p-4 pb-0 rounded-t-xl">
                     {cardSlots}
                 </div>
-                <div className="flex w-full flex-col gap-2 bg-gray-950 p-2 ">
+                <div className="flex w-full flex-col bg-gray-950 p-2 ">
                     {((isGameOver || !isGameStarted) && results[id]) ?
                         (<p className={`animate-pulse text-center font-bold ${results[id] === 'Win' ? 'text-green-500' :
                             results[id] === 'Lose' ? 'text-red-500' :
