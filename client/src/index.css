@@ -38,7 +38,7 @@ body {
   @apply w-[100dvw];
   @apply h-[100dvh];
   @apply overflow-hidden;
-  @apply text-main-text;
+  @apply text-text-primary;
   background-image: url("/src/assets//pictures/background.png");
   background-size: 100% 100%;
   background-repeat: unset;
