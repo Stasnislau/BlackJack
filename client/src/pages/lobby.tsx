@@ -4,6 +4,7 @@ import { CreateNameModal } from '../components/modals';
 import { connection } from '../connection';
 import { CreateResponse } from '../types';
 import BlackjackPicture from './../assets/pictures/blackjack.png'
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Lobby = () => {
     const navigate = useNavigate();
@@ -56,68 +57,120 @@ const Lobby = () => {
     }, []);
 
     return (
-        <div className="h-screen bg-background-primary overflow-y-auto px-20">
-            <div className="flex flex-row w-full mt-20">
-                <div className='grow 2xl:w-[65%] md:w-[75%] w-[50%]'>
-                    <div className="flex flex-col justify-center px-[20%] w-full h-full gap-4 font-bold">
-                        <p className='text-primary text-6xl'>Join others in BlackJack</p>
-                        <p className='text-secondary text-2xl'>Get tonnes of cash</p>
-                        <button
-                            onClick={() => setIsNameModalOpen(true)}
-                            className="bg-primary w-40 text-text-secondary hover:scale-105 hover:saturate-150 text-lg font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out shadow-lg"
-                        >
-                            Join Game
-                        </button>
-                    </div>
-                </div>
-                <div className='grow 2xl:w-[35%] md:w-[25%] w-[50%]'>
-                    <img src={BlackjackPicture} alt="Blackjack" className="w-full h-auto object-cover" />
-                </div>
-            </div>
-            <div className=" mx-auto px-4">
-                <div className="text-center mb-12">
-                    <h2 className="md:text-3xl text-xl text-gold mb-6">How to Play</h2>
-                    <p className="mb-4 md:text-lg sm:text-md text-sm text-green-300">
-                        Beat the dealer by getting a count as close to 21 as possible, without going over.
-                        If you do it better than the dealer, you win.
-                    </p>
-                    <p className="mb-4 md:text-lg sm:text-md text-sm text-green-300">
-                        Hit to take another card, or stand to stop. If your total is higher than the dealer's
-                        without going over 21, you win the round.
-                    </p>
-                </div>
-                <div className="flex justify-center gap-4">
-
-                    <button
-                        onClick={handleCreateGame}
-                        className="bg-gradient-to-r from-gold-500 to-gold-700 hover:scale-110 hover:saturate-150 text-xl font-bold py-4 px-8 rounded-full transition duration-300 ease-in-out shadow-lg"
-                    >
-                        Create Game
-                    </button>
-                </div>
-                {isGameCreated && (
-                    <div className="flex justify-center items-center mt-8">
-                        <div className="bg-green-500 text-white text-2xl font-bold py-2 px-4 rounded-lg shadow-lg flex items-center gap-4">
-                            <span>Game Code: &nbsp;
-                                <span className="text-gold animate-pulse">
-                                    {gameCode}
-                                </span>
-                            </span>
+        <div className="h-screen bg-background-primary overflow-y-auto">
+            <div className='flex flex-col w-full h-full'>
+                <div className="flex flex-row w-full mt-6">
+                    <div className='grow 2xl:w-[55%] md:w-[75%] w-[50%] pl-[10%]'>
+                        <div className="flex flex-col justify-center w-full h-full gap-4 font-bold ml-20">
+                            <p className='text-primary text-7xl select-none'>Join others in BlackJack</p>
+                            <p className='text-secondary text-3xl animate-pulse select-none'>Play online to
+                                <span className='text-primary'> win</span> big
+                            </p>
                             <button
-                                onClick={() => navigator.clipboard.writeText(gameCode)}
-                                className="bg-gold-500 hover:bg-gold-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105"
-                                title="Copy Game Code"
+                                onClick={() => setIsNameModalOpen(true)}
+                                className="bg-primary w-40 select-none text-text-secondary hover:scale-105 hover:saturate-150 text-lg font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out shadow-lg"
                             >
-                                Copy
+                                Join Game
                             </button>
                         </div>
                     </div>
-                )}
-                <footer className="text-center text-green-300 mt-12 md:text-lg sm:text-md text-sm">
-                    <p>
-                        Ready for the challenge? Grab a seat at the table by joining a game or setting up your own.
-                    </p>
-                </footer>
+                    <div className='grow 2xl:w-[45%] md:w-[25%] w-[50%] pr-[10%] select-none'>
+                        <img src={BlackjackPicture} alt="Blackjack" className="w-auto h-full object-cover" />
+                    </div>
+                </div>
+                <div className="flex flex-row w-full h-12 mt-8 bg-background-secondary">
+                    <div className="w-1/3 rounded-e-full h-full justify-center bg-primary">
+                        <p className="text-text-secondary flex h-full text-2xl font-bold justify-center items-center select-none">
+                            It's your chance
+                        </p>
+                    </div>
+                    <div className="grow rounded-full h-full justify-between flex text-md flex-row mx-6">
+                        <p className="text-text-primary flex h-full font-bold justify-center items-center select-none">
+                            Play with people around the globe
+                        </p>
+                        <p className="text-text-primary flex h-full font-bold justify-center items-center select-none">
+                            Create your own game
+                        </p>
+                        <p className="text-text-primary flex h-full font-bold justify-center items-center select-none">
+                            Join a game
+                        </p>
+                    </div>
+                </div>
+
+
+                <div className="grow min-h-0 bg-button-secondary w-full pt-8 mx-auto px-4 grid grid-cols-3 grid-rows-2 gap-4">
+                    <div className="col-start-2 row-start-2 flex flex-col items-center justify-center gap-4">
+                        <button
+                            onClick={handleCreateGame}
+                            className="bg-gold-700 select-none text-text-primary hover:scale-105 hover:saturate-150 text-3xl font-bold py-4 px-8 rounded-full transition duration-300 ease-in-out shadow-lg"
+                        >
+                            Create Game
+                        </button>
+                    </div>
+                    <div className="col-start-1 row-span-2 row-start-1 flex flex-col items-start gap-4">
+                        <div className='w-full text-center gap-4'>
+                            <p className="text-primary  font-bold text-xl select-none">
+                                Rules of the Game
+                            </p>
+                        </div>
+                        <p className="text-text-primary text-md select-none">
+                            1. The goal is to get closer to 21 than the dealer without going over.
+                        </p>
+                        <p className="text-text-primary text-md select-none">
+                            2. Cards 2-10 are worth their face value, face cards are worth 10, and Aces are worth 1 or 11.
+                        </p>
+                        <p className="text-text-primary text-md select-none">
+                            3. Players receive two cards face up, while the dealer has one card face up and one face down.
+                        </p>
+                    </div>
+                    <AnimatePresence>
+                        {isGameCreated && (
+                            <div className="col-start-2 row-start-1 flex justify-center items-center">
+                                <motion.div
+                                    initial={{ scale: 0.8, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    transition={{ duration: 0.5 }}
+                                    className="flex flex-col justify-between gap-4 items-center bg-gradient-to-tr from-gold-700 to-gold-200 p-4 rounded-xl shadow-lg"
+                                >
+                                    <span className=" text-gray-700 font-bold text-2xl select-none">
+                                        Game Code
+                                    </span>
+                                    <div className="flex flex-row items-center gap-4">
+                                        <p
+                                            className="text-text-secondary font-bold text-lg select-text">
+                                            {gameCode}
+                                        </p>
+                                        <motion.button
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                            onClick={() => navigator.clipboard.writeText(gameCode)}
+                                            className=" text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out bg-gray-700 hover:saturate-150 select-none"
+                                            title="Copy Game Code"
+                                        >
+                                            Copy
+                                        </motion.button>
+                                    </div>
+                                </motion.div>
+                            </div>
+                        )}
+                    </AnimatePresence>
+                    <div className="col-start-3 row-span-2 row-start-1 flex flex-col items-start gap-4">
+                        <div className='w-full text-center gap-4'>
+                            <p className="text-primary  font-bold text-xl select-none">
+                                Responsible Gaming
+                            </p>
+                        </div>
+                        <p className="text-text-primary text-md select-none">
+                            1. Set a budget and stick to it.
+                        </p>
+                        <p className="text-text-primary text-md select-none">
+                            2. Take breaks and don't chase losses.
+                        </p>
+                        <p className="text-text-primary text-md select-none">
+                            3. Know when to walk away and enjoy other activities.
+                        </p>
+                    </div>
+                </div>
             </div>
             <CreateNameModal
                 isOpen={isNameModalOpen}
@@ -127,7 +180,7 @@ const Lobby = () => {
                 }}
                 initGameCode={gameCode}
             />
-        </div>
+        </div >
     );
 };
 
