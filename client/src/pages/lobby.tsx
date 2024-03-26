@@ -132,7 +132,7 @@ const Lobby = () => {
                                     transition={{ duration: 0.5 }}
                                     className="flex flex-col justify-between gap-4 items-center bg-gradient-to-tr from-gold-700 to-gold-200 p-4 rounded-xl shadow-lg"
                                 >
-                                    <span className=" text-gray-700 font-bold text-2xl select-none">
+                                    <span className=" text-gray-900 font-bold text-2xl select-none">
                                         Game Code
                                     </span>
                                     <div className="flex flex-row items-center gap-4">
