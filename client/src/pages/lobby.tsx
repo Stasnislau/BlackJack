@@ -56,12 +56,18 @@ const Lobby = () => {
     }, []);
 
     return (
-        <div className="h-screen bg-background-primary overflow-y-auto">
-            <div className="flex flex-row w-full">
+        <div className="h-screen bg-background-primary overflow-y-auto px-20">
+            <div className="flex flex-row w-full mt-20">
                 <div className='grow 2xl:w-[65%] md:w-[75%] w-[50%]'>
-                    <div className="flex flex-col justify-center items-center h-full gap-4 font-bold">
-                        <p className='text-primary text-7xl'>Join others in BlackJack</p>
-                        <p className='text-secondary text-2xl'>Get tonnes of cash</p> 
+                    <div className="flex flex-col justify-center px-[20%] w-full h-full gap-4 font-bold">
+                        <p className='text-primary text-6xl'>Join others in BlackJack</p>
+                        <p className='text-secondary text-2xl'>Get tonnes of cash</p>
+                        <button
+                            onClick={() => setIsNameModalOpen(true)}
+                            className="bg-primary w-40 text-text-secondary hover:scale-105 hover:saturate-150 text-lg font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out shadow-lg"
+                        >
+                            Join Game
+                        </button>
                     </div>
                 </div>
                 <div className='grow 2xl:w-[35%] md:w-[25%] w-[50%]'>
@@ -81,12 +87,7 @@ const Lobby = () => {
                     </p>
                 </div>
                 <div className="flex justify-center gap-4">
-                    <button
-                        onClick={() => setIsNameModalOpen(true)}
-                        className="bg-gradient-to-r from-green-500 to-green-700 hover:scale-110 hover:saturate-150 text-xl font-bold py-4 px-8 rounded-full transition duration-300 ease-in-out shadow-lg"
-                    >
-                        Join Game
-                    </button>
+
                     <button
                         onClick={handleCreateGame}
                         className="bg-gradient-to-r from-gold-500 to-gold-700 hover:scale-110 hover:saturate-150 text-xl font-bold py-4 px-8 rounded-full transition duration-300 ease-in-out shadow-lg"
