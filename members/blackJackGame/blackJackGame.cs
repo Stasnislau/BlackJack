@@ -59,7 +59,7 @@ public class BlackjackGame
 
     public string AddHumanPlayer(string name)
     {
-        if (isGameStarted)
+        if (isGameStarted && !IsGameOver)
         {
             throw new GameException("Game already started");
         }
@@ -80,7 +80,7 @@ public class BlackjackGame
 
     public void RemovePlayer(string id)
     {
-        if (isGameStarted)
+        if (isGameStarted && !IsGameOver)
         {
             throw new GameException("Game already started");
         }

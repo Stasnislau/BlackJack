@@ -94,7 +94,10 @@ public class GameSessionsManager
         {
             _connectionSessionMap.Remove(connectionId);
         }
-        // _sessions[sessionId]?.RemovePlayer(playerId); wait for up to minute to see if the player reconnects
+        else {
+            throw new GameException("Player not found");
+        }
+        _gameCodeGameMap[gameCode]?.RemovePlayer(playerId);
         _playerConnectionMap.Remove(playerId);
     }
 

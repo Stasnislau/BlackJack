@@ -88,7 +88,7 @@ public class GameHub : Hub
         try
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, gameCode);
-            _gameSessionsManager.RemovePlayerFromGame(Context.ConnectionId, playerId);
+            _gameSessionsManager.RemovePlayerFromGame(gameCode, playerId);
             await Clients.Caller.SendAsync("GameMessage", new
             {
                 task = "leave",

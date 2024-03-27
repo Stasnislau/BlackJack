@@ -65,7 +65,7 @@ const CreateNameModal = ({
                                 value={gameCode}
                                 disabled={initGameCode !== ''}
                                 onChange={(e) => setGameCode(e.target.value)}
-                                className="border border-text-primary p-2 rounded-lg mb-4 disabled:opacity-50 disabled:bg-gray-200 disabled:text-text-secondary"
+                                className="border p-2 rounded-lg mb-4 disabled:opacity-50 bg-gray-200 text-text-secondary"
                                 placeholder='Enter Game Code Here...'
                             />
                             <label htmlFor="name" className="mb-2 text-text-primary">Name</label>
@@ -73,7 +73,7 @@ const CreateNameModal = ({
                                 type="text"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                className="border border-text-primary p-2 rounded-lg mb-4 text-text-secondary"
+                                className="border border-text-primary bg-gray-200 p-2 rounded-lg mb-4 text-text-secondary"
                                 placeholder='Enter Name Here...'
                             />
 

@@ -40,8 +40,7 @@ const PlayerBox = ({
     if (!id && !isCroupier) {
         return null;
     }
-    console.log(results[id], name, "RESULTS")
-    const cardSlots = Array.from({ length: 5 }).map((_, index) => {
+    const cardSlots = Array.from({ length: hand.length > 5 ? hand.length : 5 }).map((_, index) => {
         const card = hand[index];
 
         return card ? (
