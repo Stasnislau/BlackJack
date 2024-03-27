@@ -63,6 +63,15 @@ public class BlackjackGame
         {
             throw new GameException("Game already started");
         }
+        if (Players.Count > 3)
+        {
+            throw new GameException("Too many players");
+        }
+        if (name == null || name == "")
+        {
+            throw new GameException("Name cannot be empty");
+        }
+
         var player = new HumanPlayer(name);
         Players.Add(player);
         return player.Id;
@@ -70,9 +79,13 @@ public class BlackjackGame
 
     public void AddAIPlayer()
     {
-        if (isGameStarted)
+        if (isGameStarted && !IsGameOver)
         {
             throw new GameException("Game already started");
+        }
+        if (Players.Count > 3)
+        {
+            throw new GameException("Too many players");
         }
         string name = "AI" + new Random().Next(1000, 9999);
         Players.Add(new AIPlayer(name));
@@ -80,11 +93,19 @@ public class BlackjackGame
 
     public void RemovePlayer(string id)
     {
-        if (isGameStarted && !IsGameOver)
+        if (Players.Find(player => player.Id == id) == null)
         {
-            throw new GameException("Game already started");
+            throw new GameException("Player not found");
+        }
+        if (isGameStarted)
+        {
+            SkipPlayer(id);
         }
         Players.RemoveAll(player => player.Id == id);
+        if (isGameStarted)
+        {
+            MakeTurn();
+        }
         if (Players.Count == 0)
         {
             EndGame();
@@ -92,6 +113,10 @@ public class BlackjackGame
     }
     public void NextPlayer()
     {
+        if (!isGameStarted)
+        {
+            return;
+        }
         if (CurrentPlayerId == "")
         {
             CurrentPlayerId = Players[0].Id;
@@ -109,6 +134,19 @@ public class BlackjackGame
             }
         }
         MakeTurn();
+    }
+
+    private void SkipPlayer(string playerId)
+    {
+        int currentPlayerIndex = Players.FindIndex(player => player.Id == CurrentPlayerId);
+        if (currentPlayerIndex == Players.Count - 1)
+        {
+            CurrentPlayerId = Croupier.Id;
+        }
+        else
+        {
+            CurrentPlayerId = Players[currentPlayerIndex + 1].Id;
+        }
     }
 
     public void EndGame()
@@ -308,6 +346,10 @@ public class BlackjackGame
 
     public void MakeTurn()
     {
+        if (!isGameStarted)
+        {
+            return;
+        }
         if (CurrentPlayerId == Croupier.Id)
         {
             while (!Croupier.HasFinishedTurn)

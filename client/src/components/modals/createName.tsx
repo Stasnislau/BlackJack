@@ -18,6 +18,7 @@ const CreateNameModal = ({
 }: CreateNameModalProps) => {
     const [name, setName] = useState('');
     const [gameCode, setGameCode] = useState<string>("");
+    const [error, setError] = useState<string | null>(null);
     useEffect(() => {
         if (initGameCode !== '')
             setGameCode(initGameCode);
@@ -26,14 +27,19 @@ const CreateNameModal = ({
     const ref = useRef(null);
 
     useClickOutside(ref, () => {
+        setError(null);
         onClose();
     });
 
     const handleSubmit = () => {
+        if (!name || !gameCode) {
+            setError("Please fill in all fields");
+            return;
+        }
         onSubmit(name, gameCode);
+        setError(null);
         onClose();
     };
-
 
     return (
         <AnimatePresence>
@@ -46,12 +52,15 @@ const CreateNameModal = ({
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                 >
                     <div
-                        className="bg-gray-500 p-10 rounded-xl text-text-primary relative md:w-auto w-full max-w-md lg:min-w-80 lg:max-w-none"
+                        className="bg-gray-600 p-10 rounded-xl text-text-primary relative md:w-auto w-full max-w-md lg:min-w-80 lg:max-w-none"
                         ref={ref}
                     >
                         <div className="absolute top-[5%] right-[5%] cursor-pointer">
                             <button
-                                onClick={onClose}
+                                onClick={() => {
+                                    setError(null);
+                                    onClose()
+                                }}
                                 className="text-3xl hover:scale-110 transform transition duration-300 ease-in-out text-text-primary"
                             >
                                 &times;
@@ -65,7 +74,7 @@ const CreateNameModal = ({
                                 value={gameCode}
                                 disabled={initGameCode !== ''}
                                 onChange={(e) => setGameCode(e.target.value)}
-                                className="border p-2 rounded-lg mb-4 disabled:opacity-50 bg-gray-200 text-text-secondary"
+                                className="border p-2 rounded-lg mb-4 disabled:opacity-50 bg-gray-200 text-text-secondary outline-none"
                                 placeholder='Enter Game Code Here...'
                             />
                             <label htmlFor="name" className="mb-2 text-text-primary">Name</label>
@@ -73,7 +82,7 @@ const CreateNameModal = ({
                                 type="text"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                className="border border-text-primary bg-gray-200 p-2 rounded-lg mb-4 text-text-secondary"
+                                className="border border-text-primary bg-gray-200 p-2 rounded-lg mb-4 text-text-secondary outline-none"
                                 placeholder='Enter Name Here...'
                             />
 
@@ -84,6 +93,12 @@ const CreateNameModal = ({
                                 Submit
                             </button>
                         </div>
+                        {error && <motion.p
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="text-red-500">{error}</motion.p>}
                     </div>
                 </motion.div>
             )}

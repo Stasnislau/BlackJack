@@ -159,12 +159,12 @@ const GamePage = () => {
                     </p>
                 )}
                 {isConnected ? (
-                    <p className="text-green-400">Connected</p>
+                    <p className="text-casino-green">Connected</p>
                 ) : (
                     <p className="text-red-400">Disconnected</p>
                 )}
                 {isJoined ? (
-                    <p className="text-green-400">Joined</p>
+                    <p className="text-casino-green">Joined</p>
                 ) : (
                     <p className="text-red-500">Not Joined</p>
                 )}
@@ -184,7 +184,7 @@ const GamePage = () => {
                 ) : null}
             </div>
 
-            {!isGameStarted && !gameState.isGameOver &&
+            {!isGameStarted && !gameState.isGameOver && isJoined &&
                 <div className="absolute left-[50%] top-[45%] transform -translate-x-1/2 flex flex-row gap-4">
                     <button
 
@@ -201,7 +201,7 @@ const GamePage = () => {
                     </button>
                 </div>
             }
-            {gameState.isGameOver &&
+            {gameState.isGameOver && isJoined &&
                 <div className="absolute left-[50%] top-[45%] transform -translate-x-1/2 flex flex-row gap-4">
                     <button
                         onClick={() => connection.invoke('RestartGame', gameCode).catch((err) => console.error(err))}
@@ -216,6 +216,11 @@ const GamePage = () => {
                         Leave Game
                     </button>
                 </div>
+            }
+            {
+                !isJoined && (
+                    <p className="text-2xl">Joining...</p>
+                )
             }
 
             {isJoined && GameDesk({
