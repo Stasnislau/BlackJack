@@ -139,6 +139,10 @@ public class BlackjackGame
         }
         foreach (Player player in Players)
         {
+            if (!player.HasFinishedTurn)
+            {
+                continue;
+            }
             if (player.Score > 21)
             {
                 results.Add(player.Id, "Lose");

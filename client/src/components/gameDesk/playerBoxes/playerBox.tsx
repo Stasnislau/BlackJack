@@ -40,6 +40,7 @@ const PlayerBox = ({
     if (!id && !isCroupier) {
         return null;
     }
+    console.log(results[id], name, "RESULTS")
     const cardSlots = Array.from({ length: 5 }).map((_, index) => {
         const card = hand[index];
 
@@ -50,7 +51,7 @@ const PlayerBox = ({
         );
     });
     return (
-        <div className={`flex flex-col items-center bg-gray-600 bg-opacity-85 shadow-xl p-4 rounded m-2 ${isCroupier ? 'absolute top-0 left-1/2 transform -translate-x-1/2' : 'relative'} ${isCurrentPlayer && !isGameOver ? 'border-2 border-green-500' : ''}`}>
+        <div className={`flex flex-col items-center bg-gray-600 bg-opacity-85 shadow-xl p-4 rounded m-2 ${isCroupier ? 'absolute top-0 left-1/2 transform -translate-x-1/2' : 'relative'} ${isCurrentPlayer && !isGameOver ? 'border-2 border-casino-green' : ''}`}>
             <div className="flex flex-col items-center relative">
                 {results[id] && <p className="text-green-500 text-lg absolute left-[50%] top-[0%] transform -translate-x-1/2">{results[id]}</p>}
                 <div className="flex bg-gray-950 rounded-t-xl relative">
@@ -61,15 +62,15 @@ const PlayerBox = ({
                 </div>
                 <div className="flex w-full flex-col bg-gray-950 p-2 ">
                     {((isGameOver || !isGameStarted) && results[id]) ?
-                        (<p className={`animate-pulse text-center font-bold ${results[id] === 'Win' ? 'text-green-500' :
+                        (<p className={`animate-pulse text-center font-bold ${results[id] === 'Win' ? 'text-casino-green' :
                             results[id] === 'Lose' ? 'text-red-500' :
-                                results[id] === 'Draw' ? 'text-yellow-500' :
-                                    'text-white'
+                                results[id] === 'Draw' ? 'text-gold-700' :
+                                    'text-text-primary'
                             }`}
                         >
                             {results[id]}
                         </p>) :
-                        (isBlackjack ? <p className="text-green-500 text-center">Blackjack!</p> :
+                        (isBlackjack ? <p className="text-casino-green text-center">Blackjack!</p> :
                             score > 21 && <p className="text-red-500 text-center">Busted!</p>)
                     }
                     {
@@ -78,7 +79,7 @@ const PlayerBox = ({
                     }
                 </div>
                 {(isGameStarted || isGameOver) && (score !== 0) &&
-                    <div className="rounded-full bg-orange-500 absolute p-1 left-[50%] top-[95%] transform -translate-x-1/2">
+                    <div className="rounded-full bg-gold-700 absolute p-1 left-[50%] top-[95%] transform -translate-x-1/2">
                         <p className="text-white font-bold">Score:
                             <span className={
                                 `text-xl ${score > 21 ? 'text-[#FF0000]' : 'text-white'}`

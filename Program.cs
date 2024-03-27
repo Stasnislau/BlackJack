@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
@@ -19,20 +17,6 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
     options.MinimumSameSitePolicy = SameSiteMode.None;
 });
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(x =>
-    {
-        x.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = "*",
-            ValidAudience = "*",
-            ClockSkew = TimeSpan.Zero,
-        };
-    });
 
 builder.Services.AddAuthorization();
 builder.Services.AddCors(options =>
