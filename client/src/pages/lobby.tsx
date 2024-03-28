@@ -102,7 +102,10 @@ const Lobby = () => {
                     <div className="col-start-2 row-start-2 flex flex-col items-center justify-center gap-4">
                         <button
                             onClick={handleCreateGame}
-                            className="bg-gold-700 select-none text-text-primary hover:scale-105 hover:saturate-150 text-3xl font-bold py-4 px-8 rounded-full transition duration-300 ease-in-out shadow-lg"
+                            disabled={isGameCreated}
+                            className="bg-gold-700 select-none
+                             disabled:opacity-50 disabled:cursor-not-allowed
+                            text-text-primary hover:scale-105 hover:saturate-150 text-3xl font-bold py-4 px-8 rounded-full transition duration-300 ease-in-out shadow-lg"
                         >
                             Create Game
                         </button>

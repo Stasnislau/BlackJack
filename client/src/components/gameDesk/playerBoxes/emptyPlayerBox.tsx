@@ -23,7 +23,7 @@ const EmptyPlayerBox = ({ onAddPlayer }: EmptyPlayerBoxProps) => {
             </div>
             <div className="flex w-full flex-col bg-gray-950 p-2 relative ">
 
-                <button onClick={onAddPlayer} className="bg-green-500 text-white px-4 py-2 rounded-full absolute left-[50%] top-[95%] transform -translate-x-1/2 hover:bg-green-700 transition duration-200 hover:scale-105">
+                <button onClick={onAddPlayer} className="bg-casino-green text-white px-4 py-2 rounded-full absolute left-[50%] top-[95%] transform -translate-x-1/2 hover:saturate-50 transition duration-200 hover:scale-105">
                     Add AI Player
                 </button>
             </div>

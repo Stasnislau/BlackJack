@@ -59,7 +59,7 @@ public class BlackjackGame
 
     public string AddHumanPlayer(string name)
     {
-        if (isGameStarted && !IsGameOver)
+        if (isGameStarted || (!IsGameOver && isGameStarted))
         {
             throw new GameException("Game already started");
         }
@@ -79,7 +79,7 @@ public class BlackjackGame
 
     public void AddAIPlayer()
     {
-        if (isGameStarted && !IsGameOver)
+        if (isGameStarted || (!IsGameOver && isGameStarted))
         {
             throw new GameException("Game already started");
         }
