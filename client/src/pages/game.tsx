@@ -53,13 +53,11 @@ const GamePage = () => {
             }
         }
         else {
-            console.log('Joining Game:', gameCode, name);
             connection.invoke('JoinGame', gameCode, name).catch((err) => console.error(err));
         }
     }
     async function startConnection() {
         try {
-            console.log('SignalR Connecting in Game Page...', connection.state, gameCode, name);
             if (connection.state === "Disconnected") {
                 await connection.start();
                 setIsConnected(true);
@@ -79,20 +77,17 @@ const GamePage = () => {
         }
         connection.onclose(() => {
             setIsConnected(false);
-            console.log('SignalR Disconnected.');
             startConnection();
         });
 
         return () => {
             if (connection.state === "Connected" && isJoined && gameCode) {
-                console.log('SignalR Stopping in Game Page...', isJoined, gameCode);
                 connection.stop();
             }
         };
     }, [gameCode]);
 
     useEffect(() => {
-        console.log('SignalR State Changed:', connection.state, gameCode, isConnected, isJoined);
         if (gameCode && isConnected && !isJoined && connection.state === "Connected") {
             connection.invoke('JoinGame', gameCode, name).catch((err) => console.error(err));
         }
@@ -124,31 +119,24 @@ const GamePage = () => {
                     }
                     setGameState(response.gameState!);
                     setIsGameStarted(response.gameState!.isGameStarted);
-                    console.log('Game State Updated:', response.gameState);
                     break;
                 case "reconnect":
-                    console.log(response, "Reconnect Response")
                     if (response.message === "success" && response.playerId !== "") {
 
                         setIsConnected(true);
                         setIsJoined(true);
                         setPlayerId(response.playerId!);
-                        console.log('Reconnected');
                     } else if (response.message === "failure") {
                         localStorage.removeItem("blackJack");
-                        console.log('Reconnect failed', isConnected);
                         startConnection();
                     }
                     break;
                 case "join":
-                    console.log('Player Joined:', response.message);
                     setIsJoined(true);
                     localStorage.setItem("blackJack", JSON.stringify({ localGameCode: gameCode, localPlayerId: response.playerId }));
                     setPlayerId(response.playerId!);
-                    console.log('Player id:', response.playerId!);
                     break;
                 case "leave":
-                    console.log('Player Left:', response.message);
                     navigate('/');
                     break;
                 case "error":

@@ -83,7 +83,6 @@ public class GameSessionsManager
 
         }
         var playerId = game.AddHumanPlayer(name);
-        Console.WriteLine("Player added to game: " + playerId);
         _connectionSessionMap[connectionId] = gameCode;
         _playerConnectionMap[playerId] = connectionId;
         return playerId;
@@ -226,7 +225,6 @@ public class GameSessionsManager
             string gameCode = _connectionSessionMap[connectionId];
             _connectionSessionMap.Remove(connectionId);
             _playerConnectionMap.Remove(playerId);
-            Console.WriteLine("Player disconnected: " + playerId + " " + connectionId);
             RemovePlayerUnlessConnected(playerId, gameCode);
         }
     }

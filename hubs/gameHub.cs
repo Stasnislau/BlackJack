@@ -71,7 +71,6 @@ public class GameHub : Hub
                 });
                 return;
             }
-            Console.WriteLine("Joining game " + _gameSessionsManager.IsPlayerInGame(Context.ConnectionId, gameCode));
             if (_gameSessionsManager.IsPlayerInGame(Context.ConnectionId, gameCode))
             {
                 await Clients.Caller.SendAsync("GameMessage", new
@@ -160,7 +159,6 @@ public class GameHub : Hub
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        Console.WriteLine("DISCONNECTED");
         try
         {
             _gameSessionsManager.DisconnectPlayer(Context.ConnectionId);
@@ -203,7 +201,6 @@ public class GameHub : Hub
             bool result = _gameSessionsManager.ReconnectPlayer(Context.ConnectionId, playerId, gameCode);
             if (result)
             {
-                Console.WriteLine("Successfully reconnected " + playerId);
                 await Groups.AddToGroupAsync(Context.ConnectionId, gameCode);
                 await Clients.Caller.SendAsync("GameMessage", new
                 {
