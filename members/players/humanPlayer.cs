@@ -4,11 +4,6 @@ public class HumanPlayer : Player
     {
     }
 
-    public void Split()
-    {
-        Console.WriteLine("Splitting is not yet implemented");
-    }
-
     public void Double()
     {
         Console.WriteLine("Double down is not yet implemented");
