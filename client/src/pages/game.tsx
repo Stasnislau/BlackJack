@@ -9,6 +9,7 @@ const GamePage = () => {
     const [isConnected, setIsConnected] = useState(connection.state === "Connected");
     const [gameState, setGameState] = useState({} as GameState);
     const [playerId, setPlayerId] = useState('');
+    const [error, setError] = useState('');
     const { gameCode } = useParams();
     const location = useLocation();
     const navigate = useNavigate();
@@ -37,30 +38,32 @@ const GamePage = () => {
     const handleLeaveGame = (playerId: string) => {
         connection.invoke('LeaveGame', gameCode, playerId).catch((err) => console.error(err));
     }
-
+    const reconnect = () => {
+        if (connection.state !== "Connected") {
+            return;
+        }
+        const blackJack = localStorage.getItem("blackJack");
+        if (blackJack) {
+            const { localGameCode, localPlayerId } = JSON.parse(blackJack);
+            if (gameCode === localGameCode && localPlayerId !== "") {
+                connection.invoke('Reconnect', gameCode, localPlayerId).catch((err) => console.error(err));
+            }
+            else {
+                localStorage.removeItem("blackJack");
+            }
+        }
+        else {
+            console.log('Joining Game:', gameCode, name);
+            connection.invoke('JoinGame', gameCode, name).catch((err) => console.error(err));
+        }
+    }
     async function startConnection() {
         try {
             console.log('SignalR Connecting in Game Page...', connection.state, gameCode, name);
             if (connection.state === "Disconnected") {
                 await connection.start();
-                console.log('SignalR Connected.');
                 setIsConnected(true);
-                const blackJack = localStorage.getItem("blackJack");
-                console.log(blackJack, "blackJack");
-                if (blackJack) {
-                    const { localGameCode, localPlayerId } = JSON.parse(blackJack);
-                    if (gameCode === localGameCode && localPlayerId !== "") {
-                        connection.invoke('Reconnect', gameCode, localPlayerId).catch((err) => console.error(err));
-                    }
-                    else {
-                        localStorage.removeItem("blackJack");
-                    }
-                }
-                else {
-                    console.log('Joining Game:', gameCode, name);
-                    connection.invoke('JoinGame', gameCode, name).catch((err) => console.error(err));
-                }
-
+                reconnect();
             }
             else if (connection.state === "Connected" && !isJoined) {
                 connection.invoke('JoinGame', gameCode, name).catch((err) => console.error(err));
@@ -74,7 +77,6 @@ const GamePage = () => {
         if (!isConnected && connection.state === "Disconnected") {
             startConnection();
         }
-
         connection.onclose(() => {
             setIsConnected(false);
             console.log('SignalR Disconnected.');
@@ -90,7 +92,7 @@ const GamePage = () => {
     }, [gameCode]);
 
     useEffect(() => {
-        console.log('SignalR State Changed:', connection.state);
+        console.log('SignalR State Changed:', connection.state, gameCode, isConnected, isJoined);
         if (gameCode && isConnected && !isJoined && connection.state === "Connected") {
             connection.invoke('JoinGame', gameCode, name).catch((err) => console.error(err));
         }
@@ -98,21 +100,36 @@ const GamePage = () => {
 
 
     useEffect(() => {
+        connection.on("Error", (error) => {
+            if (error.task === "join" && localStorage.getItem("blackJack") !== null) {
+                reconnect();
+                return;
+            }
+            if (error.task === "join") {
+                setError(error.message);
+                setTimeout(() => {
+                    navigate('/');
+                }, 3000);
+            }
+        });
         connection.on("GameMessage", (message) => {
             const response = message as GameMessageInterface;
             switch (response.task) {
                 case "start":
-                    console.log("POEHALI! ");
                     setIsGameStarted(true);
                     break;
                 case "state":
+                    if (!isJoined) {
+                        setIsJoined(true);
+                    }
                     setGameState(response.gameState!);
                     setIsGameStarted(response.gameState!.isGameStarted);
                     console.log('Game State Updated:', response.gameState);
                     break;
                 case "reconnect":
+                    console.log(response, "Reconnect Response")
                     if (response.message === "success" && response.playerId !== "") {
-                        console.log(response)
+
                         setIsConnected(true);
                         setIsJoined(true);
                         setPlayerId(response.playerId!);
@@ -146,6 +163,7 @@ const GamePage = () => {
         return () => {
             if (connection.state === "Connected") {
                 connection.off("GameMessage");
+                connection.off("Error");
             }
         };
     }, []);
@@ -153,35 +171,40 @@ const GamePage = () => {
     return (
         <div className='flex flex-col items-center justify-center h-screen text-white'>
             <div className="flex flex-col p-4 absolute right-[1%] top-[5%] bg-gray-800 bg-opacity-60 shadow-lg rounded-lg">
-                {name && (
-                    <p className="text-lg mb-2">
-                        Name: <span className="text-gold-200">{name}</span>
-                    </p>
+                {gameCode && (
+                    <>
+                        <p className="text-gold-200 font-mono">{gameCode}</p>
+
+                        <p className="">
+                            Name: <span className="text-gold-200">{name}</span>
+                        </p>
+                    </>
                 )}
-                {isConnected ? (
-                    <p className="text-casino-green">Connected</p>
-                ) : (
-                    <p className="text-red-400">Disconnected</p>
-                )}
-                {isJoined ? (
-                    <p className="text-casino-green">Joined</p>
-                ) : (
-                    <p className="text-red-500">Not Joined</p>
-                )}
+
+
                 {gameState.players && gameState.players.length > 0 && (
                     <>
                         <p>Money: {gameState.players.find((player) => player.id === playerId)?.money}</p>
-                        <p>Bet: {gameState.players.find((player) => player.id === playerId)?.bet}</p>
+                        <p>Bet: {gameState.players.find((player) => player.id === playerId)?.bet === 0 ? 10 : gameState.players.find((player) => player.id === playerId)?.bet}</p>
                     </>
                 )}
-                {gameCode && (
-                    <p className="text-lg mb-2">
-                        Game Code: <span className="text-gold-200">{gameCode}</span>
-                    </p>
-                )}
+                <div className="flex flex-row gap-4">
+                    {isConnected ? (
+                        <p className="text-casino-green">Connected</p>
+                    ) : (
+                        <p className="text-red-400">Disconnected</p>
+                    )}
+                    {isJoined && isConnected ? (
+                        <p className="text-casino-green">Joined</p>
+                    ) : (
+                        <p className="text-red-500">Not Joined</p>
+                    )}
+                </div>
+
                 {!isGameStarted || gameState.isGameOver ? (
                     <p className="italic mb-3">Waiting to start...</p>
                 ) : null}
+
             </div>
 
             {!isGameStarted && !gameState.isGameOver && isJoined &&
@@ -220,8 +243,10 @@ const GamePage = () => {
             {
                 !isJoined && (
                     <p className="text-2xl">Joining...</p>
+
                 )
             }
+            {error && <p className="text-red-500">{error}</p>}
 
             {isJoined && GameDesk({
                 gameState,

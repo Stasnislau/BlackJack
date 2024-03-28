@@ -3,7 +3,7 @@ using DTOs;
 public class GameSessionsManager
 {
     private readonly Dictionary<string, BlackjackGame> _gameCodeGameMap = new(); // 
-    private readonly Dictionary<string, string> _connectionSessionMap = new(); //  connectionId, sessionId
+    private readonly Dictionary<string, string> _connectionSessionMap = new(); //  connectionId, GameCode
 
     private readonly Dictionary<string, string> _playerConnectionMap = new(); //  playerId, connectionId
 
@@ -25,6 +25,23 @@ public class GameSessionsManager
         else
         {
             return "";
+        }
+    }
+
+    private async void RemovePlayerUnlessConnected(string playerId, string gameCode)
+    {
+        try
+        {
+            await Task.Delay(20000);
+            if (_playerConnectionMap.ContainsKey(playerId))
+            {
+                return;
+            }
+            _gameCodeGameMap[gameCode]?.RemovePlayer(playerId);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
         }
     }
 
@@ -58,7 +75,7 @@ public class GameSessionsManager
         }
         if (_connectionSessionMap.ContainsKey(connectionId))
         {
-            throw new GameException("Player already in a game");
+            throw new GameException("Player already in the game");
         }
         var playerId = game.AddHumanPlayer(name);
         Console.WriteLine("Player added to game: " + playerId);
@@ -85,7 +102,7 @@ public class GameSessionsManager
         {
             throw new GameException("Game not found");
         }
-         
+
         _gameCodeGameMap[gameCode].RemovePlayer(playerId);
     }
     public void RemovePlayerFromGame(string gameCode, string playerId)
@@ -94,7 +111,8 @@ public class GameSessionsManager
         {
             _connectionSessionMap.Remove(connectionId);
         }
-        else {
+        else
+        {
             throw new GameException("Player not found");
         }
         _gameCodeGameMap[gameCode]?.RemovePlayer(playerId);
@@ -118,14 +136,15 @@ public class GameSessionsManager
 
     public bool ReconnectPlayer(string connectionId, string playerId, string gameCode)
     {
-        if (!_playerConnectionMap.ContainsKey(playerId) || _playerConnectionMap[playerId] == connectionId || !_gameCodeGameMap[gameCode].Players.Any(p => p.Id == playerId))
+        if (!_playerConnectionMap.TryGetValue(playerId, out string? value) && value == connectionId && !_gameCodeGameMap[gameCode].Players.Any(p => p.Id == playerId))
         {
             return false;
         }
-        string oldConnectionId = _playerConnectionMap[playerId];
+        string oldConnectionId = value;
         _playerConnectionMap[playerId] = connectionId;
         _connectionSessionMap[connectionId] = gameCode;
-        _connectionSessionMap.Remove(oldConnectionId);
+        if (oldConnectionId != null && _connectionSessionMap.ContainsKey(oldConnectionId))
+            _connectionSessionMap.Remove(oldConnectionId);
         return true;
     }
 
@@ -193,4 +212,26 @@ public class GameSessionsManager
         }
         game.RestartGame();
     }
+
+    public void DisconnectPlayer(string connectionId)
+    {
+        string playerId = GetPlayerId(connectionId);
+        if (playerId != "")
+        {
+            string gameCode = _connectionSessionMap[connectionId];
+            _connectionSessionMap.Remove(connectionId);
+            _playerConnectionMap.Remove(playerId);
+            Console.WriteLine("Player disconnected: " + playerId + " " + connectionId);
+            RemovePlayerUnlessConnected(playerId, gameCode);
+        }
+    }
+
+    public bool IsPlayerInGame(string connectionId, string gameCode)
+    {
+        string playerId = GetPlayerId(connectionId);
+        return _gameCodeGameMap[gameCode].Players.Any(p => p.Id == playerId);
+    }
+
+
+
 }

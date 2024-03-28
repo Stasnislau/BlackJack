@@ -61,6 +61,27 @@ public class GameHub : Hub
     {
         try
         {
+            if (!_gameSessionsManager.IsGameSessionAvailable(gameCode))
+            {
+                await Clients.Caller.SendAsync("Error", new
+                {
+                    task = "join",
+                    gameCode,
+                    message = "Not available."
+                });
+                return;
+            }
+            Console.WriteLine("Joining game " + _gameSessionsManager.IsPlayerInGame(Context.ConnectionId, gameCode));
+            if (_gameSessionsManager.IsPlayerInGame(Context.ConnectionId, gameCode))
+            {
+                await Clients.Caller.SendAsync("GameMessage", new
+                {
+                    task = "state",
+                    gameCode,
+                    gameState = _gameSessionsManager.GetGameState(gameCode)
+                });
+                return;
+            }
             await Groups.AddToGroupAsync(Context.ConnectionId, gameCode);
             string playerId = _gameSessionsManager.AddHumanPlayerToSession(gameCode, name, Context.ConnectionId);
             await Clients.Caller.SendAsync("GameMessage", new
@@ -76,7 +97,15 @@ public class GameHub : Hub
         catch (Exception e)
         {
             if (e is GameException)
+            {
                 Console.WriteLine("Error joining game " + e.Message);
+                await Clients.Caller.SendAsync("Error", new
+                {
+                    task = "join",
+                    gameCode,
+                    message = e.Message
+                });
+            }
             else
                 Console.WriteLine(e);
 
@@ -131,12 +160,13 @@ public class GameHub : Hub
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
+        Console.WriteLine("DISCONNECTED");
         try
         {
-            _gameSessionsManager.RemovePlayerFromGame(Context.ConnectionId, playerId: "");
+            _gameSessionsManager.DisconnectPlayer(Context.ConnectionId);
             if (exception != null)
             {
-                Console.WriteLine(exception.Message);
+                Console.WriteLine(exception.Message, "Connection lost");
             }
             await base.OnDisconnectedAsync(exception);
         }

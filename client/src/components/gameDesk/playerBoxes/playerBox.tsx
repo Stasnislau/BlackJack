@@ -82,9 +82,9 @@ const PlayerBox = ({
                     X
                 </button>
             }
-            <div className={`flex rounded-t-xl text-xl font-serif absolute ${isCroupier ? "top-[110%]" : "bottom-[100%]"}  left-1/2 transform -translate-x-1/2`}>
+            <div className={`flex rounded-t-xl text-xl font-bold font-serif absolute ${isCroupier ? "top-[110%]" : "bottom-[100%]"}  left-1/2 transform -translate-x-1/2`}>
                 {((isGameOver || !isGameStarted) && results[id]) ?
-                    (<p className={`text-center  font-bold ${results[id] === 'Win' ? 'text-casino-green' :
+                    (<p className={`text-center   ${results[id] === 'Win' ? 'text-casino-green' :
                         results[id] === 'Lose' ? 'text-red-500' :
                             results[id] === 'Draw' ? 'text-gold-700' :
                                 'text-text-primary'
@@ -92,8 +92,8 @@ const PlayerBox = ({
                     >
                         {results[id]}
                     </p>) :
-                    (isBlackjack ? <p className="text-casino-green text-center">Blackjack!</p> :
-                        score > 21 && <p className="text-red-500 text-center">Busted!</p>)
+                    (isBlackjack ? <p className="text-casino-green">Blackjack!</p> :
+                        score > 21 && <p className="text-red-500">Busted!</p>)
                 }
             </div>
         </div>

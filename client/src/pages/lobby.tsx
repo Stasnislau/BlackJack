@@ -57,12 +57,12 @@ const Lobby = () => {
     }, []);
 
     return (
-        <div className="h-screen bg-background-primary overflow-y-auto">
+        <div className=" min-h-screen h-full bg-background-primary overflow-y-auto">
             <div className='flex flex-col w-full h-full'>
                 <div className="flex flex-row w-full mt-6">
-                    <div className='grow 2xl:w-[55%] md:w-[75%] w-[50%] pl-[10%]'>
-                        <div className="flex flex-col justify-center w-full h-full gap-4 font-bold ml-20">
-                            <p className='text-primary text-7xl select-none'>Join others in BlackJack</p>
+                    <div className='grow 3xl:w-[52%] md:w-[45%] w-[50%] 3xl:pl-[10%] xl:pl-[2%] lg:pl-10'>
+                        <div className="flex flex-col justify-center w-full h-full gap-4 font-bold md:ml-20">
+                            <p className='text-primary lg:text-7xl md:text-5xl text-3xl select-none'>Join others in BlackJack</p>
                             <p className='text-secondary text-3xl animate-pulse select-none'>Play online to
                                 <span className='text-primary'> win</span> big
                             </p>
@@ -74,7 +74,7 @@ const Lobby = () => {
                             </button>
                         </div>
                     </div>
-                    <div className='grow 2xl:w-[45%] md:w-[25%] w-[50%] pr-[10%] select-none'>
+                    <div className='grow 2xl:w-[45%] md:w-[40%] w-[50%] lg:pr-[10%] select-none'>
                         <img src={BlackjackPicture} alt="Blackjack" className="w-auto h-full object-cover" />
                     </div>
                 </div>
@@ -140,7 +140,7 @@ const Lobby = () => {
                                     </span>
                                     <div className="flex flex-row items-center gap-4">
                                         <p
-                                            className="text-text-secondary font-bold text-lg select-text">
+                                            className="text-text-secondary font-bold text-lg select-text font-mono">
                                             {gameCode}
                                         </p>
                                         <motion.button
