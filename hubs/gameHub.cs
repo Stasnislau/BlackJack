@@ -297,6 +297,19 @@ public class GameHub : Hub
         }
     }
 
+    public async Task Double(string gameCode)
+    {
+        try
+        {
+            _gameSessionsManager.Double(gameCode, Context.ConnectionId);
+            await BroadcastGameState(gameCode);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error doubling " + e);
+        }
+    }
+
     public async Task RestartGame(string gameCode)
     {
         try

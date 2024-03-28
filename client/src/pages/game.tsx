@@ -38,6 +38,10 @@ const GamePage = () => {
     const handleLeaveGame = (playerId: string) => {
         connection.invoke('LeaveGame', gameCode, playerId).catch((err) => console.error(err));
     }
+
+    const handleDouble = () => {
+        connection.invoke('Double', gameCode).catch((err) => console.error(err));
+    }
     const reconnect = () => {
         if (connection.state !== "Connected") {
             return;
@@ -239,6 +243,7 @@ const GamePage = () => {
             {isJoined && GameDesk({
                 gameState,
                 playerId,
+                onDouble: handleDouble,
                 onHit: handleHit,
                 onStand: handleStand,
                 onAddPlayer: handleAddAiPlayer,

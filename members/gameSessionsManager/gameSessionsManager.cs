@@ -173,6 +173,21 @@ public class GameSessionsManager
         game.Hit(playerId);
     }
 
+    public void Double(string gameCode, string connectionId)
+    {
+        var game = GetGame(gameCode);
+        string playerId = GetPlayerId(connectionId);
+        if (game == null)
+        {
+            throw new GameException("Session not found");
+        }
+        if (playerId == "")
+        {
+            throw new GameException("Player not found");
+        }
+        game.Double(playerId);
+    }
+
     public void Stand(string gameCode, string connectionId)
     {
         var game = GetGame(gameCode);

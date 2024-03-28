@@ -307,6 +307,33 @@ public class BlackjackGame
         }
     }
 
+    public void Double(string playerId)
+    {
+        if (!isGameStarted)
+        {
+            throw new GameException("Game not started");
+        }
+        if (IsGameOver)
+        {
+            throw new GameException("Game is over");
+        }
+        if (playerId != CurrentPlayerId)
+        {
+            throw new GameException("Not your turn");
+        }
+        HumanPlayer currentPlayer = Players.Find(player => player.Id == playerId && player is HumanPlayer) as HumanPlayer;
+        if (currentPlayer == null)
+        {
+            throw new GameException("Player not found");
+        }
+        if (currentPlayer.Money < currentPlayer.Bet * 2)
+        {
+            throw new GameException("Not enough money");
+        }
+        currentPlayer.Double(Deck);
+        NextPlayer();
+    }
+
     public void Stand(string playerId)
     {
         if (!isGameStarted)

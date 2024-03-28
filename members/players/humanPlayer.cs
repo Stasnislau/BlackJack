@@ -4,9 +4,14 @@ public class HumanPlayer : Player
     {
     }
 
-    public void Double()
-    {
-        Console.WriteLine("Double down is not yet implemented");
+    public void Double(Deck deck)
+    {   
+        if (Money < Bet * 2)
+        {
+            throw new Exception("Not enough money to double");
+        }
+        Draw(deck); 
+        SetBet(Bet * 2);
+        Stand();
     }
-
 }
