@@ -75,7 +75,12 @@ public class GameSessionsManager
         }
         if (_connectionSessionMap.ContainsKey(connectionId))
         {
-            throw new GameException("Player already in the game");
+            if (_connectionSessionMap[connectionId] == gameCode)
+                throw new GameException("Player already in the game");
+            else {
+                throw new GameException("Player already in another game");
+            }
+
         }
         var playerId = game.AddHumanPlayer(name);
         Console.WriteLine("Player added to game: " + playerId);

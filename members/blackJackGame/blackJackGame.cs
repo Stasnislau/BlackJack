@@ -268,7 +268,7 @@ public class BlackjackGame
             Croupier.Id,
             Croupier.Bet,
             Croupier.HasFinishedTurn,
-            Croupier.Hand.Count == 2 && Croupier.Score == 21
+            Croupier.Hand.Count == 2 && Croupier.Score == 21 && (CurrentPlayerId == Croupier.Id || Croupier.HasFinishedTurn)
         ));
         return new GameState(
             CurrentPlayerId,
@@ -354,7 +354,7 @@ public class BlackjackGame
         {
             while (!Croupier.HasFinishedTurn)
             {
-                Croupier.DoAction(Deck);
+                Croupier.DoAction(Deck, this.Players.ToArray());
             }
             EndGame();
             return;
