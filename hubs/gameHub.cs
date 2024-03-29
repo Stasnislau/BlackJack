@@ -80,13 +80,7 @@ public class GameHub : Hub
         {
             if (!_gameSessionsManager.IsGameSessionAvailable(gameCode))
             {
-                await Clients.Caller.SendAsync("Error", new
-                {
-                    task = "join",
-                    gameCode,
-                    message = "Not available."
-                });
-                return;
+                throw new GameException("not available.");
             }
             if (_gameSessionsManager.IsPlayerInGame(Context.ConnectionId, gameCode))
             {
@@ -112,19 +106,7 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            if (e is GameException)
-            {
-                Console.WriteLine("Error joining game " + e.Message);
-                await Clients.Caller.SendAsync("Error", new
-                {
-                    task = "join",
-                    gameCode,
-                    message = e.Message
-                });
-            }
-            else
-                Console.WriteLine(e);
-
+            await HandleException(e, "join");
         }
     }
 
@@ -145,10 +127,7 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            if (e is GameException)
-                Console.WriteLine("Error leaving game " + e.Message);
-            else
-                Console.WriteLine(e);
+            await HandleException(e, "leave");
         }
     }
 
@@ -167,10 +146,7 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            if (e is GameException)
-                Console.WriteLine("Error starting game " + e.Message);
-            else
-                Console.WriteLine(e);
+            await HandleException(e, "start");
         }
     }
 
@@ -204,10 +180,7 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            if (e is GameException)
-                Console.WriteLine("Error checking game session availability " + e.Message);
-            else
-                Console.WriteLine(e);
+            await HandleException(e, "available");
         }
     }
 
@@ -247,10 +220,7 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            if (e is GameException)
-                Console.WriteLine("Error reconnecting " + e.Message);
-            else
-                Console.WriteLine(e);
+            await HandleException(e, "reconnect");
         }
 
     }
@@ -264,10 +234,7 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            if (e is GameException)
-                Console.WriteLine("Error adding AI player " + e.Message);
-            else
-                Console.WriteLine(e);
+            await HandleException(e, "add");
         }
     }
 
@@ -280,10 +247,7 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            if (e is GameException)
-                Console.WriteLine("Error removing AI player " + e.Message);
-            else
-                Console.WriteLine(e);
+            await HandleException(e, "remove");
         }
     }
 
@@ -297,7 +261,7 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error hitting " + e);
+            await HandleException(e, "hit");
         }
     }
 
@@ -310,7 +274,7 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error standing " + e);
+            await HandleException(e, "stand");
         }
     }
 
@@ -323,7 +287,7 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error doubling " + e);
+            await HandleException(e, "double");
         }
     }
 
@@ -336,7 +300,7 @@ public class GameHub : Hub
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error restarting game " + e);
+            await HandleException(e, "restart");
         }
     }
 
