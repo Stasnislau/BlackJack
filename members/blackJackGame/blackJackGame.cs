@@ -63,7 +63,7 @@ public class BlackjackGame
         {
             throw new GameException("Game already started");
         }
-        if (Players.Count > 3)
+        if (Players.Count > 2)
         {
             throw new GameException("Too many players");
         }

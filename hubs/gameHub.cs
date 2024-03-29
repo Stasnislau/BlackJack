@@ -1,3 +1,4 @@
+using System.Reflection.Metadata;
 using DTOs;
 using Microsoft.AspNetCore.SignalR;
 
@@ -8,6 +9,22 @@ public class GameHub : Hub
     public GameHub(GameSessionsManager gameSessionsManager)
     {
         _gameSessionsManager = gameSessionsManager;
+    }
+
+    private async Task HandleException(Exception e, string? task)
+    {
+        if (e is GameException)
+        {
+            await Clients.Caller.SendAsync("Error", new
+            {
+                task,
+                message = e.Message
+            });
+        }
+        else
+        {
+            Console.WriteLine(e);
+        }
     }
 
     private async Task BroadcastGameState(string gameCode)
