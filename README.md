@@ -6,7 +6,7 @@ This project is a web-based implementation of the classic card game, BlackJack. 
 - C#
 - .Net 8
 - ASP.NET
-- SygnalR
+- SignalR
 - React
 - TypeScript
 - Tailwind
