@@ -1,3 +1,4 @@
+using System.Reflection;
 using DTOs;
 public class BlackjackGame
 {
@@ -14,7 +15,7 @@ public class BlackjackGame
 
     public bool IsGamePaused { get; set; }
 
-    public bool isGameStarted { get; set; }
+    public bool IsGameStarted { get; set; }
 
 
 
@@ -27,7 +28,7 @@ public class BlackjackGame
         CurrentPlayerId = "";
         Bet = 10;
         IsGamePaused = false;
-        isGameStarted = false;
+        IsGameStarted = false;
     }
 
     public void StartGame()
@@ -36,7 +37,7 @@ public class BlackjackGame
         {
             throw new GameException("Not enough players");
         }
-        isGameStarted = true;
+        IsGameStarted = true;
         Players.ForEach(player => player.SetBet(Bet));
         Croupier.SetBet(Bet);
         Deck.PopulateDeck();
@@ -59,7 +60,7 @@ public class BlackjackGame
 
     public string AddHumanPlayer(string name)
     {
-        if (isGameStarted || (!IsGameOver && isGameStarted))
+        if (IsGameStarted || (!IsGameOver && IsGameStarted))
         {
             throw new GameException("Game already started");
         }
@@ -79,7 +80,7 @@ public class BlackjackGame
 
     public void AddAIPlayer()
     {
-        if (isGameStarted || (!IsGameOver && isGameStarted))
+        if (IsGameStarted || (!IsGameOver && IsGameStarted))
         {
             throw new GameException("Game already started");
         }
@@ -97,12 +98,12 @@ public class BlackjackGame
         {
             throw new GameException("Player not found");
         }
-        if (isGameStarted)
+        if (IsGameStarted)
         {
             SkipPlayer(id);
         }
         Players.RemoveAll(player => player.Id == id);
-        if (isGameStarted)
+        if (IsGameStarted)
         {
             MakeTurn();
         }
@@ -113,7 +114,7 @@ public class BlackjackGame
     }
     public void NextPlayer()
     {
-        if (!isGameStarted)
+        if (!IsGameStarted)
         {
             return;
         }
@@ -152,14 +153,14 @@ public class BlackjackGame
     public void EndGame()
     {
         IsGameOver = true;
-        isGameStarted = false;
+        IsGameStarted = false;
         ApplyResults(CalculateResults());
     }
 
     public void ResetGame()
     {
         IsGameOver = false;
-        isGameStarted = false;
+        IsGameStarted = false;
         CurrentPlayerId = "";
         Croupier.ResetHand();
         foreach (Player player in Players)
@@ -274,7 +275,7 @@ public class BlackjackGame
             CurrentPlayerId,
             IsGameOver,
             IsGamePaused,
-            isGameStarted,
+            IsGameStarted,
             playersList,
             CalculateResults()
         );
@@ -282,7 +283,7 @@ public class BlackjackGame
 
     public void Hit(string playerId)
     {
-        if (!isGameStarted)
+        if (!IsGameStarted)
         {
             throw new GameException("Game not started");
         }
@@ -309,7 +310,7 @@ public class BlackjackGame
 
     public void Double(string playerId)
     {
-        if (!isGameStarted)
+        if (!IsGameStarted)
         {
             throw new GameException("Game not started");
         }
@@ -321,22 +322,27 @@ public class BlackjackGame
         {
             throw new GameException("Not your turn");
         }
-        HumanPlayer currentPlayer = Players.Find(player => player.Id == playerId && player is HumanPlayer) as HumanPlayer;
+        Player currentPlayer = Players.Find(player => player.Id == playerId);
         if (currentPlayer == null)
         {
             throw new GameException("Player not found");
+        }
+        MethodInfo doubleMethod = currentPlayer.GetType().GetMethod("Double");
+        if (doubleMethod == null)
+        {
+            throw new GameException("Double method not found");
         }
         if (currentPlayer.Money < currentPlayer.Bet * 2)
         {
             throw new GameException("Not enough money");
         }
-        currentPlayer.Double(Deck);
+        doubleMethod.Invoke(currentPlayer, [Deck]);
         NextPlayer();
     }
 
     public void Stand(string playerId)
     {
-        if (!isGameStarted)
+        if (!IsGameStarted)
         {
             throw new GameException("Game not started");
         }
@@ -373,7 +379,7 @@ public class BlackjackGame
 
     public void MakeTurn()
     {
-        if (!isGameStarted)
+        if (!IsGameStarted)
         {
             return;
         }
