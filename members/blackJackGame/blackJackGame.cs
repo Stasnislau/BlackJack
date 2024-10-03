@@ -363,6 +363,34 @@ public class BlackjackGame
         NextPlayer();
     }
 
+    public void Split(string playerId)
+    {
+        if (!IsGameStarted)
+        {
+            throw new GameException("Game not started");
+        }
+        if (IsGameOver)
+        {
+            throw new GameException("Game is over");
+        }
+        if (playerId != CurrentPlayerId)
+        {
+            throw new GameException("Not your turn");
+        }
+        Player currentPlayer = Players.Find(player => player.Id == playerId);
+        if (currentPlayer == null)
+        {
+            throw new GameException("Player not found");
+        }
+        MethodInfo splitMethod = currentPlayer.GetType().GetMethod("Split");
+        if (splitMethod == null)
+        {
+            throw new GameException("Split method not found");
+        }
+        splitMethod.Invoke(currentPlayer, [Deck]);
+        NextPlayer();
+    }
+
     public StateDTO[] GetAllGameStates()
     {
         List<StateDTO> states = new List<StateDTO>();

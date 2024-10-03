@@ -154,7 +154,7 @@ public class GameSessionsManager
 
     public bool IsGameSessionAvailable(string gameId)
     {
-        return _gameCodeGameMap.ContainsKey(gameId);
+        return _gameCodeGameMap.containsKey(gameId);
     }
 
     public void Hit(string gameCode, string connectionId)
@@ -201,6 +201,21 @@ public class GameSessionsManager
             throw new GameException("Player not found");
         }
         game.Stand(playerId);
+    }
+
+    public void Split(string gameCode, string connectionId)
+    {
+        var game = GetGame(gameCode);
+        string playerId = GetPlayerId(connectionId);
+        if (game == null)
+        {
+            throw new GameException("Session not found");
+        }
+        if (playerId == "")
+        {
+            throw new GameException("Player not found");
+        }
+        game.Split(playerId);
     }
 
     public BroadCastDto[] GetGameStatesForBroadcast(string gameCode)
