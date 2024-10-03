@@ -42,6 +42,11 @@ const GamePage = () => {
     const handleDouble = () => {
         connection.invoke('Double', gameCode).catch((err) => console.error(err));
     }
+
+    const handleSplit = () => {
+        connection.invoke('Split', gameCode).catch((err) => console.error(err));
+    }
+
     const reconnect = () => {
         if (connection.state !== "Connected") {
             return;
@@ -246,6 +251,7 @@ const GamePage = () => {
                 onDouble: handleDouble,
                 onHit: handleHit,
                 onStand: handleStand,
+                onSplit: handleSplit,
                 onAddPlayer: handleAddAiPlayer,
                 onRemoveAiPlayer: handleRemoveAiPlayer,
             })}

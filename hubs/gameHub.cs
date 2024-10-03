@@ -291,6 +291,19 @@ public class GameHub : Hub
         }
     }
 
+    public async Task Split(string gameCode)
+    {
+        try
+        {
+            _gameSessionsManager.Split(gameCode, Context.ConnectionId);
+            await BroadcastGameState(gameCode);
+        }
+        catch (Exception e)
+        {
+            await HandleException(e, "split");
+        }
+    }
+
     public async Task RestartGame(string gameCode)
     {
         try

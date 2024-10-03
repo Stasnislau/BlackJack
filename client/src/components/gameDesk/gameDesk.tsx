@@ -8,16 +8,18 @@ interface GameDeskProps {
     onHit: () => void;
     onStand: () => void;
     onDouble: () => void;
+    onSplit: () => void;
     onAddPlayer: () => void;
     onRemoveAiPlayer: (id: string) => void;
 }
 
-const GameDesk = ({ gameState, playerId, onHit, onDouble, onStand, onAddPlayer, onRemoveAiPlayer }: GameDeskProps) => {
+const GameDesk = ({ gameState, playerId, onHit, onDouble, onStand, onSplit, onAddPlayer, onRemoveAiPlayer }: GameDeskProps) => {
     const croupier = gameState?.isGameStarted || gameState.isGameOver ? gameState?.players[gameState?.players.length - 1] : null;
     const players = gameState?.players && gameState.players.length > 1 ? gameState?.players.slice(0, -1) : []
     const emptySlots = Math.max(0, 3 - (players?.length || 0));
     const player = players?.find(player => player.id === playerId);
     const canDouble = player && player.money ? player.bet * 2 <= player.money : false;
+    const canSplit = player && player.hand.length === 2 && player.hand[0].rank === player.hand[1].rank;
     const getPlayerPosition = (index: number, isEmpty = false) => {
         const numberOfTheBox = isEmpty ?
             players?.length + index
@@ -89,7 +91,13 @@ const GameDesk = ({ gameState, playerId, onHit, onDouble, onStand, onAddPlayer, 
                             >
                                 Double
                             </button>
-
+                            <button
+                                onClick={onSplit}
+                                className="bg-primary text-white font-bold py-2 px-4 rounded hover:saturate-150 hover:scale-105 focus:outline-none focus:shadow-outline disabled:opacity-50"
+                                disabled={!canSplit}
+                            >
+                                Split
+                            </button>
                             <button
                                 onClick={onStand}
                                 className="bg-red-500 hover:bg-red-700 hover:scale-105 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
